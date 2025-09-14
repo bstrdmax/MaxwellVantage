@@ -1,11 +1,11 @@
 
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../ui/Card';
+// FIX: Added missing HeartIcon to imports.
 import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon } from '../../constants';
 
 const SettingsView = () => {
   const { currentUser } = useAuth();
-
   return (
     <div className="space-y-6">
       <h1 className="md:text-4xl text-3xl font-bold text-[#6366f1]">Settings</h1>
@@ -112,7 +112,7 @@ const SettingsView = () => {
                 <h4 className="font-semibold text-slate-700 mb-2">Workspace Settings</h4>
                 <div>
                   <label className="text-xs text-slate-500">Workspace Name</label>
-                  <input type="text" placeholder="e.g., Maxwell Vantage" className="w-full bg-white text-sm rounded-md p-2 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#6366f1]" />
+                  <input type="text" defaultValue="Maxwell Vantage" className="w-full bg-white text-sm rounded-md p-2 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#6366f1]" />
                 </div>
               </div>
 
@@ -184,6 +184,19 @@ const SettingsView = () => {
 
         </div>
       </div>
+
+      <footer className="text-center text-xs text-slate-400 mt-8 pt-6 border-t border-slate-200">
+        <p>
+          Powered by{' '}
+          <a href="https://www.maxwellriskgroup.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-500 hover:text-[#6366f1] transition-colors">
+            Maxwell Risk Group
+          </a>{' '}
+          &{' '}
+          <a href="https://www.jwmautomation.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-500 hover:text-[#6366f1] transition-colors">
+            JWM Automations
+          </a>
+        </p>
+      </footer>
     </div>
   );
 };
