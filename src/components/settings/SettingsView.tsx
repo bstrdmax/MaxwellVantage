@@ -1,7 +1,7 @@
 
+import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../ui/Card';
-// FIX: Added missing HeartIcon to imports.
 import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon } from '../../constants';
 
 const SettingsView = () => {
@@ -185,19 +185,6 @@ const SettingsView = () => {
 
         </div>
       </div>
-
-      <footer className="text-center text-xs text-slate-400 mt-8 pt-6 border-t border-slate-200">
-        <p>
-          Powered by{' '}
-          <a href="https://www.maxwellriskgroup.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-500 hover:text-[#6366f1] transition-colors">
-            Maxwell Risk Group
-          </a>{' '}
-          &{' '}
-          <a href="https://www.jwmautomation.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-500 hover:text-[#6366f1] transition-colors">
-            JWM Automations
-          </a>
-        </p>
-      </footer>
     </div>
   );
 };
