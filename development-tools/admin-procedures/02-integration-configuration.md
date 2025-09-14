@@ -1,4 +1,5 @@
 
+
 # Desk Procedure: Integration Configuration
 
 **Role:** Workspace Owner / Administrator
@@ -29,7 +30,7 @@ There are two types of environment variables used in this application:
 -   **Procedure for Administrator**:
     1.  In your deployment platform's settings, add an environment variable with the key `API_KEY`.
     2.  Set its value to your secret Google Gemini API Key.
-    3.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server.
+    3.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server and prevents security scanners from failing your build.
 
 ### 4. Airtable (Client-Side)
 
