@@ -1,7 +1,4 @@
-// Fix: The reference to 'vite/client' was causing an error because the type definitions
-// could not be found. It has been replaced with a manual definition of ImportMeta and ImportMetaEnv
-// to provide correct typings for environment variables throughout the Vite application.
-// This resolves all 'import.meta.env' related TypeScript errors.
+/// <reference types="vite/client" />
 
 interface ImportMetaEnv {
   readonly VITE_FIREBASE_API_KEY: string;
