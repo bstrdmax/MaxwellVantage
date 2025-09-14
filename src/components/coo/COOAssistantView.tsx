@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import Card from '../ui/Card';
 import { MOCK_COO_INSIGHTS, MOCK_STRATEGIC_GOALS, MOCK_TOP_PRIORITY, MOCK_PROJECTS, MOCK_STRATEGIC_ADVICE, AirtableIcon, GlobeIcon, LayoutIcon, SearchIcon, MOCK_COO_KNOWLEDGE, FileTextIcon, MicIcon, InfoIcon, PlusCircleIcon, Trash2Icon, AlertTriangleIcon, TargetIcon } from '../../constants';
