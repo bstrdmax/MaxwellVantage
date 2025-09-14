@@ -8,8 +8,7 @@ const XIcon = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 );
 const LoadingSpinner = ({ small }: { small?: boolean}) => (
-    <svg className={`animate-spin ${small ? 'h-4 w-4' : 'h-5 w-5'} mr-2 text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8
- 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+    <svg className={`animate-spin ${small ? 'h-4 w-4' : 'h-5 w-5'} mr-2 text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
 );
 const FolderIcon = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -69,7 +68,6 @@ const ProjectsView: React.FC<ProjectsViewProps> = ({ addNotification }) => {
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   
-  // State for the Onboarding Playbook, persisted in localStorage
     const [documentTemplates, setDocumentTemplates] = useState<string[]>(() => {
         try {
             const saved = localStorage.getItem('onboardingDocumentTemplates');
@@ -86,8 +84,44 @@ const ProjectsView: React.FC<ProjectsViewProps> = ({ addNotification }) => {
   const [newDocTemplate, setNewDocTemplate] = useState('');
   const [isGeneratingDocs, setIsGeneratingDocs] = useState(false);
   const [isGeneratingEmail, setIsGeneratingEmail] = useState(false);
+  const [isAirtableLive, setIsAirtableLive] = useState(false);
 
-  // Save playbook changes to localStorage
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/.netlify/functions/airtable');
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
+            if (response.status >= 500 && errorData.error?.includes("Server configuration error")) {
+                throw new Error('Server not configured for Airtable');
+            }
+            throw new Error(`Failed to fetch projects: ${errorData.error || response.statusText}`);
+        }
+        
+        const records = await response.json();
+        const fetchedProjects: Project[] = records.map((record: any) => ({
+            id: record.id,
+            name: record.fields.Name,
+            client: record.fields.Client,
+            status: record.fields.Status,
+            healthScore: record.fields['Health Score'],
+            deadline: record.fields.Deadline,
+            driveFolderUrl: record.fields['Drive Folder URL'] || '#',
+            origin: 'Airtable'
+        }));
+        setProjects(fetchedProjects);
+        setIsAirtableLive(true);
+      } catch (error) {
+        console.warn("Airtable fetch error:", error);
+        addNotification("Could not connect to Airtable. Using local mock data.");
+        setIsAirtableLive(false);
+        setProjects(MOCK_PROJECTS);
+      }
+    };
+    fetchProjects();
+  }, [addNotification]);
+  
   useEffect(() => {
     try {
         localStorage.setItem('onboardingDocumentTemplates', JSON.stringify(documentTemplates));
@@ -190,19 +224,24 @@ The Team`
   };
 
   const handleExecuteOnboarding = async () => {
-      if (!selectedProject || !onboardingPlan) return;
-      setIsExecuting(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setProjects(prevProjects => 
-          prevProjects.map(p => 
-              p.id === selectedProject.id ? { ...p, status: ProjectStatus.OnTrack } : p
-          )
-      );
-      addNotification(`Onboarding for "${selectedProject.name}" completed successfully.`);
-      setIsExecuting(false);
-      setSelectedProject(null);
-      setOnboardingPlan(null);
-  };
+    if (!selectedProject) return;
+    setIsExecuting(true);
+
+    // This is a simulation. A real implementation would make a secure call
+    // to a serverless function to update Airtable.
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setProjects(prevProjects =>
+        prevProjects.map(p =>
+            p.id === selectedProject.id ? { ...p, status: ProjectStatus.OnTrack } : p
+        )
+    );
+    addNotification(`Onboarding for "${selectedProject.name}" completed successfully.`);
+
+    setIsExecuting(false);
+    setSelectedProject(null);
+    setOnboardingPlan(null);
+};
 
   const handleCloseModal = () => {
       setSelectedProject(null);
@@ -362,9 +401,9 @@ The Team`
       <Card>
         <div className="flex items-center mb-4">
           <h3 className="md:text-2xl text-xl font-medium text-[#1e293b]">All Projects</h3>
-          <div className="flex items-center ml-4 px-3 py-1 text-xs text-[#6366f1] bg-[#6366f1]/10 rounded-full">
+          <div className={`flex items-center ml-4 px-3 py-1 text-xs rounded-full ${isAirtableLive ? 'text-green-700 bg-green-100' : 'text-slate-700 bg-slate-100'}`}>
               <AirtableIcon className="w-4 h-4 mr-2" />
-              <span>Live from Airtable</span>
+              <span>{isAirtableLive ? 'Live from Airtable' : 'Using Mock Data'}</span>
           </div>
         </div>
         <div className="overflow-x-auto">
