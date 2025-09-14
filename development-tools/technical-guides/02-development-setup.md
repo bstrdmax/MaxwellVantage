@@ -6,7 +6,7 @@ This guide explains how to set up the Maxwell Vantage application on a local mac
 
 ## Prerequisites
 
-1.  **Node.js and npm**: You must have Node.js (version 18 or higher) and npm installed. You can download them from [nodejs.org](https://nodejs.org/).
+1.  **Node.js and npm**: You must have Node.js (version 20 LTS or higher) and npm installed. The project is configured to run on Node 20. You can download it from [nodejs.org](https://nodejs.org/) or use a version manager like `nvm`.
 2.  **Netlify CLI**: To run the serverless function locally, you need the Netlify command-line interface. Install it globally: `npm install -g netlify-cli`.
 3.  **A Code Editor**: Visual Studio Code is recommended.
 4.  **API Keys**: You must have valid API keys for:
