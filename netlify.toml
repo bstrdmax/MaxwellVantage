@@ -8,7 +8,8 @@
   to = "/index.html"
   status = 200
 
-[secrets_scan]
-  # This tells Netlify's scanner to ignore the public client-side Firebase keys.
-  # The '*' is a wildcard that matches all variables starting with VITE_FIREBASE_.
-  omit_keys = ["VITE_FIREBASE_*"]
+[build.environment]
+  # Whitelist all public Vite Firebase keys for Netlify's secrets scanner.
+  # These keys are designed to be public and are safe to expose in the client-side build.
+  # This prevents the build from failing due to false positive secret detection.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_FIREBASE_API_KEY,VITE_FIREBASE_APP_ID,VITE_FIREBASE_MESSAGING_SENDER_ID"
