@@ -20,8 +20,8 @@ All integrations in Maxwell Vantage are managed via **Environment Variables** in
 
 There are two types of environment variables used in this application:
 
-1.  **Server-Side Variables**: These are the most secure and are **only** accessible by the backend serverless functions. They are never exposed to the user's browser.
-2.  **Client-Side Variables (prefixed with `VITE_`)**: These are made available to the React frontend code. They should be used for services that require initialization in the browser (like Firebase or a read-only Airtable key).
+1.  **Server-Side Variables**: These are the most secure and are **only** accessible by the backend serverless functions. They are never exposed to the user's browser. **All highly sensitive keys (Gemini, Airtable) MUST be server-side.**
+2.  **Client-Side Variables (prefixed with `VITE_`)**: These are made available to the React frontend code. They should be used for services that require initialization in the browser (like Firebase).
 
 ### 3. Google Gemini API (Server-Side)
 
@@ -30,18 +30,17 @@ There are two types of environment variables used in this application:
 -   **Procedure for Administrator**:
     1.  In your deployment platform's settings, add an environment variable with the key `API_KEY`.
     2.  Set its value to your secret Google Gemini API Key.
-    3.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server and prevents security scanners from failing your build.
+    3.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server.
 
-### 4. Airtable (Client-Side)
+### 4. Airtable (Server-Side)
 
--   **Functionality**:
-    -   **Projects Assistant**: Syncs the "All Projects" view from an Airtable base.
-    -   **Prospects Assistant**: Allows syncing of qualified prospects from Vantage *to* an Airtable base.
--   **Variable Names**: `VITE_AIRTABLE_API_KEY`, `VITE_AIRTABLE_BASE_ID`, `VITE_PROJECTS_TABLE_NAME`, `VITE_PROSPECTS_TABLE_NAME`
+-   **Functionality**: Syncs project and prospect data.
+-   **Variable Names**: `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `PROJECTS_TABLE_NAME`, `PROSPECTS_TABLE_NAME`
 -   **Procedure for Administrator**:
-    1.  Add the four `VITE_` prefixed variables listed above to your deployment platform's environment settings.
+    1.  Add the four variables listed above to your deployment platform's environment settings.
     2.  Fill in the corresponding values from your Airtable account.
-    3.  Redeploy the application for the changes to take effect.
+    3.  **Crucially, do not add the `VITE_` prefix.** These are sensitive credentials that are handled securely by a serverless function. Exposing them to the client will cause the build to fail.
+    4.  Redeploy the application for the changes to take effect.
 
 ### 5. Firebase (Client-Side)
 
@@ -54,4 +53,5 @@ There are two types of environment variables used in this application:
 ### Verifying Connections
 
 -   After setting variables and redeploying, navigate to the **Settings** page in Maxwell Vantage. The integrations should show a "Connected" status.
+-   If the **Projects Assistant** shows "Using Mock Data", the `AIRTABLE_` variables are likely incorrect or missing. Check your deployment platform's settings and redeploy.
 -   If an integration is not connected, the most common cause is a mistyped variable name or value, or forgetting to redeploy the application.
