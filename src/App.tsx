@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -101,7 +101,7 @@ const App: React.FC = () => {
      * A function passed down to child components to allow them to add new notifications.
      * @param message - The content of the notification to be displayed.
      */
-    const addNotification = (message: string) => {
+    const addNotification = useCallback((message: string) => {
         const newNotification: Notification = {
             id: `notif${Date.now()}`,
             message,
@@ -109,7 +109,7 @@ const App: React.FC = () => {
             read: false,
         };
         setNotifications(prev => [newNotification, ...prev]);
-    };
+    }, []);
 
     /**
      * Renders the main content view based on the `activeView` state.
