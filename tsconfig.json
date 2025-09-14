@@ -21,7 +21,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "netlify/functions"],
-  "exclude": [
-    "src/components/projects/ProjectAssistantView.tsx"
-  ],
   "references": [{ "path": "./tsconfig.node.json" }]
+}
