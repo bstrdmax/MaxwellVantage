@@ -1,19 +1,14 @@
-# Netlify configuration file
-
 [build]
-  # This command builds your Vite/React application for production.
   command = "npm run build"
-  
-  # This is the directory that contains the built frontend assets. Vite's default is "dist".
   publish = "dist"
-  
-  # This tells Netlify where to find your serverless functions.
   functions = "netlify/functions"
 
 [[redirects]]
-  # This is a standard rule for Single Page Applications (SPAs) like React.
-  # It ensures that any direct navigation to a URL like /projects is handled
-  # by your index.html file, allowing React Router to take over.
   from = "/*"
   to = "/index.html"
   status = 200
+
+[secrets_scan]
+  # This tells Netlify's scanner to ignore the public client-side Firebase keys.
+  # The '*' is a wildcard that matches all variables starting with VITE_FIREBASE_.
+  omit_keys = ["VITE_FIREBASE_*"]
