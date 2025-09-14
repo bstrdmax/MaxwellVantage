@@ -1,7 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-// Your web app's Firebase configuration
+// Firebase configuration object.
+// These values are sourced from VITE_ prefixed environment variables,
+// which are set in the deployment environment (e.g., Netlify UI)
+// and defined in a .env file for local development.
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -11,8 +14,10 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
+// Initialize Firebase once with the provided configuration.
 const app = initializeApp(firebaseConfig);
+// Get a reference to the Firebase Auth service.
 const auth = getAuth(app);
 
+// Export the initialized app and auth service for use throughout the application.
 export { app, auth };
