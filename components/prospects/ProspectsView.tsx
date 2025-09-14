@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
 import Card from '../ui/Card';
 import { MOCK_PROSPECTS, MOCK_SYSTEM_CONTEXT, UserIcon, HeartIcon, FlagIcon, SearchIcon, SparklesIcon, BrainCircuitIcon, LightbulbIcon, TargetIcon, MessageSquareQuoteIcon, ZapIcon, AirtableIcon, CheckCircleIcon } from '../../constants';
 import type { Prospect, SystemContext } from '../../types';
 import { ProspectSource } from '../../types';
+import { callGemini, SchemaType } from '../../src/utils/ai';
 
 const LoadingSpinner = ({ small }: { small?: boolean}) => (
     <svg className={`animate-spin ${small ? 'h-4 w-4' : 'h-5 w-5'} text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -66,7 +65,6 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
 
         setIsAnalyzing(true);
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
             const prompt = `
                 System Context:
                 - Ideal Persona: ${systemContext.persona}
@@ -85,29 +83,23 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
                 4. whyFit: A concise sentence on why they are a strong fit for our business.
             `;
 
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: Type.OBJECT,
-                        properties: {
-                            analysis: { type: Type.STRING },
-                            strategy: { type: Type.STRING },
-                            talkingPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
-                            whyFit: { type: Type.STRING }
-                        },
-                        required: ["analysis", "strategy", "talkingPoints", "whyFit"]
-                    }
-                }
-            });
+            const schema = {
+                type: SchemaType.OBJECT,
+                properties: {
+                    analysis: { type: SchemaType.STRING },
+                    strategy: { type: SchemaType.STRING },
+                    talkingPoints: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+                    whyFit: { type: SchemaType.STRING }
+                },
+                required: ["analysis", "strategy", "talkingPoints", "whyFit"]
+            };
 
-            const analysisResult = JSON.parse(response.text);
+            const analysisResult = await callGemini({ prompt, schema });
             setProspects(prev => prev.map(p => p.id === prospectId ? { ...p, ...analysisResult } : p));
 
         } catch (error) {
             console.error("Error generating prospect analysis:", error);
+            addNotification(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
             // Fallback to mock data on error for demo purposes
             setProspects(prev => prev.map(p => p.id === prospectId ? { ...p, ...MOCK_PROSPECTS[0], id: p.id, companyName: p.companyName, contact: p.contact } : p));
         } finally {
@@ -118,22 +110,26 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
     const handleGetRecommendation = async () => {
         setIsRecommending(true);
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
             const prompt = `
                 System Context:
                 - Ideal Persona: ${systemContext.persona}
                 - Our Mission/Values: ${systemContext.missionValues}
                 - Our Sales Strategy: ${systemContext.strategy}
 
-                Based on the provided system context, suggest a specific, actionable place or strategy to look for new clients. The suggestion should be a concise string that can be used as a query. For example: "High-growth e-commerce companies that recently hired a Head of Marketing on LinkedIn" or "B2B SaaS startups focused on developer tools featured on Product Hunt this month". Provide only the string for the suggestion, nothing else.
+                Based on the provided system context, suggest a specific, actionable place or strategy to look for new clients. The suggestion should be a concise string that can be used as a query. For example: "High-growth e-commerce companies that recently hired a Head of Marketing on LinkedIn" or "B2B SaaS startups focused on developer tools featured on Product Hunt this month". Provide the suggestion as a JSON object with a single key "recommendation".
             `;
             
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt,
-            });
+             const schema = {
+                type: SchemaType.OBJECT,
+                properties: {
+                    recommendation: { type: SchemaType.STRING }
+                },
+                required: ['recommendation']
+            };
+            
+            const result = await callGemini({ prompt, schema });
+            setProspectingQuery(result.recommendation.trim());
 
-            setProspectingQuery(response.text.trim());
         } catch (error) {
             console.error("Error getting prospecting recommendation:", error);
             setProspectingQuery("Creative agencies on LinkedIn hiring for 'Head of Operations'");
@@ -146,7 +142,6 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
     const handleFindProspects = async () => {
         setIsFinding(true);
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
             const prompt = `
                 System Context:
                 - Ideal Persona: ${systemContext.persona}
@@ -158,34 +153,28 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
                 Based on the system context and user query, find 3 new, highly-qualified prospects. For each prospect, provide a companyName, a fictional contact email, a leadScore (1-100), and determine the nextFollowUp date (about a week from now).
             `;
 
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: Type.OBJECT,
-                        properties: {
-                            newProspects: {
-                                type: Type.ARRAY,
-                                items: {
-                                    type: Type.OBJECT,
-                                    properties: {
-                                        companyName: { type: Type.STRING },
-                                        contact: { type: Type.STRING },
-                                        leadScore: { type: Type.INTEGER },
-                                        nextFollowUp: { type: Type.STRING, description: "YYYY-MM-DD format" }
-                                    },
-                                    required: ["companyName", "contact", "leadScore", "nextFollowUp"]
-                                }
-                            }
-                        },
-                        required: ["newProspects"]
+            const schema = {
+                type: SchemaType.OBJECT,
+                properties: {
+                    newProspects: {
+                        type: SchemaType.ARRAY,
+                        items: {
+                            type: SchemaType.OBJECT,
+                            properties: {
+                                companyName: { type: SchemaType.STRING },
+                                contact: { type: SchemaType.STRING },
+                                leadScore: { type: SchemaType.INTEGER },
+                                nextFollowUp: { type: SchemaType.STRING, description: "YYYY-MM-DD format" }
+                            },
+                            required: ["companyName", "contact", "leadScore", "nextFollowUp"]
+                        }
                     }
-                }
-            });
+                },
+                required: ["newProspects"]
+            };
 
-            const result = JSON.parse(response.text);
+            const result = await callGemini({ prompt, schema });
+            
             const newProspects: Prospect[] = result.newProspects.map((p: any) => ({
                 ...p,
                 id: `prosp-${Date.now()}-${Math.random()}`,
@@ -198,6 +187,7 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
 
         } catch (error) {
             console.error("Error finding new prospects:", error);
+            addNotification(`Failed to find prospects: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setIsFinding(false);
         }
