@@ -1,6 +1,7 @@
-
+import React from 'react';
 import Card from '../ui/Card';
-import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon } from '../../constants';
+// FIX: Added missing HeartIcon to imports.
+import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon } from '../../constants';
 
 const SettingsView = () => {
   return (
@@ -60,7 +61,7 @@ const SettingsView = () => {
             <div className="space-y-4">
               <div>
                 <label className="flex items-center text-sm font-semibold text-slate-700 mb-1">
-                  Global AI Persona
+                  <HeartIcon className="w-4 h-4 mr-2" /> Global AI Persona
                 </label>
                 <textarea
                   defaultValue="You are a strategic, data-driven COO for an innovative risk management firm named Maxwell Risk Group."
