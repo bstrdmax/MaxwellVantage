@@ -1,3 +1,4 @@
+
 // Fix: The reference to 'vite/client' was causing an error because the type definitions
 // could not be found. It has been replaced with a manual definition of ImportMeta and ImportMetaEnv
 // to provide correct typings for environment variables throughout the Vite application.
@@ -13,6 +14,7 @@ interface ImportMetaEnv {
   readonly VITE_AIRTABLE_API_KEY: string;
   readonly VITE_AIRTABLE_BASE_ID: string;
   readonly VITE_PROJECTS_TABLE_NAME: string;
+  readonly VITE_PROSPECTS_TABLE_NAME: string;
 }
 
 interface ImportMeta {
