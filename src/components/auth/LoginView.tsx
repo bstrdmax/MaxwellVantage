@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../../firebase';
 import Card from '../ui/Card';
-import { FolderIcon, ZapIcon } from '../../constants';
+import { FolderIcon } from '../../constants';
 
 const LoadingSpinner = () => (
     <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
