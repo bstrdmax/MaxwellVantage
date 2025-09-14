@@ -1,5 +1,4 @@
 
-import React from 'react';
 import type { Project, Prospect, Content, RecentActivity, RevenueData, Email, EmailSummary, SuggestedResponse, COOInsight, StrategicGoal, ContentIdea, GeneratedContent, Notification, DriveIdea, StrategicAdvice, KnowledgeItem, SystemContext, ContentContext } from './types';
 import { ProjectStatus, ProspectSource, ContentType, GeneratedContentStatus, KnowledgeType } from './types';
 
