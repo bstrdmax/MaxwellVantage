@@ -110,27 +110,27 @@ This is the most important step for ensuring your application works and your API
 <br>
 
 ### 4.1 Server-Side Variables (Secrets)
-These variables are only accessible by the backend functions and are kept secure. **DO NOT add a `VITE_` prefix to these.**
+These variables are only accessible by the backend functions and are kept secure. **DO NOT add a `VITE_` prefix to these.** Add each variable with its corresponding secret value from your service provider.
 
-| Key | Value | Description |
-| :-- | :---- | :---------- |
-| `API_KEY` | `your_google_gemini_api_key_here` | Your Google Gemini API Key. |
-| `AIRTABLE_API_KEY` | `your_airtable_api_key_here` | Your Airtable Personal Access Token or API Key. |
-| `AIRTABLE_BASE_ID` | `your_airtable_base_id_here` | The ID of your Airtable base. |
-| `PROJECTS_TABLE_NAME` | `YourAirtableProjectsTableName`| The exact name of the table for projects. |
-| `PROSPECTS_TABLE_NAME`| `YourAirtableProspectsTableName`| The exact name of the table for prospects. |
+| Key | Description |
+| :-- | :---------- |
+| `API_KEY` | Your Google Gemini API Key. |
+| `AIRTABLE_API_KEY` | Your Airtable Personal Access Token or API Key. |
+| `AIRTABLE_BASE_ID` | The ID of your Airtable base. |
+| `PROJECTS_TABLE_NAME` | The exact name of the table for projects. |
+| `PROSPECTS_TABLE_NAME`| The exact name of the table for prospects. |
 
 ### 4.2 Client-Side Variables (Public)
-These variables are prefixed with `VITE_` and are safe to be exposed to the browser. Only Firebase keys should be in this section.
+These variables are prefixed with `VITE_` and are safe to be exposed to the browser. Only Firebase keys should be in this section. Add each variable with its corresponding value from the `firebaseConfig` object you obtained in Step 0.
 
-| Key | Value | Description |
-| :-- | :---- | :---------- |
-| `VITE_FIREBASE_API_KEY` | Your Firebase API Key | From the `firebaseConfig` object (Step 0). |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Your Firebase Auth Domain | From the `firebaseConfig` object (Step 0). |
-| `VITE_FIREBASE_PROJECT_ID`| Your Firebase Project ID | From the `firebaseConfig` object (Step 0). |
-| `VITE_FIREBASE_STORAGE_BUCKET`| Your Firebase Storage Bucket | From the `firebaseConfig` object (Step 0). |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Your Firebase Sender ID | From the `firebaseConfig` object (Step 0). |
-| `VITE_FIREBASE_APP_ID` | Your Firebase App ID | From the `firebaseConfig` object (Step 0). |
+| Key | Description |
+| :-- | :---------- |
+| `VITE_FIREBASE_API_KEY` | The API Key from your Firebase config. |
+| `VITE_FIREBASE_AUTH_DOMAIN` | The Auth Domain from your Firebase config. |
+| `VITE_FIREBASE_PROJECT_ID`| The Project ID from your Firebase config. |
+| `VITE_FIREBASE_STORAGE_BUCKET`| The Storage Bucket from your Firebase config. |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | The Messaging Sender ID from your Firebase config. |
+| `VITE_FIREBASE_APP_ID` | The App ID from your Firebase config. |
 
 **Double-check that you have entered all variables correctly.** A mistake here is the most common cause of deployment failure.
 
