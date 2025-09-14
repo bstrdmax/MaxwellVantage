@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import Card from '../ui/Card';
 import { MOCK_EMAILS, MOCK_MORNING_SUMMARY, MOCK_AFTERNOON_SUMMARY, MOCK_SUGGESTED_RESPONSES } from '../../constants';
-import type { Email, SuggestedResponse } from '../../types';
+import type { Email } from '../../types';
 
 // Icons for the view
 const SendIcon = () => (
