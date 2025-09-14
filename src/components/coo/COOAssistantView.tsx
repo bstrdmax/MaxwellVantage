@@ -5,6 +5,7 @@ import type { COOInsight, StrategicAdvice, UXAnalysisResult, KnowledgeItem } fro
 import { ProjectStatus, KnowledgeType } from '../../types';
 import { callGemini, SchemaType } from '../../utils/ai';
 
+// Icon mapping for different strategic advice sources.
 const sourceIcons: Record<StrategicAdvice['source'], React.FC<{className?: string}>> = {
     Airtable: AirtableIcon,
     Website: GlobeIcon,
@@ -12,28 +13,34 @@ const sourceIcons: Record<StrategicAdvice['source'], React.FC<{className?: strin
 };
 
 const COOAssistantView: React.FC = () => {
+    // Color mapping for insight priorities.
     const priorityColors: Record<COOInsight['priority'], string> = {
         High: 'border-red-500 bg-red-50',
         Medium: 'border-yellow-500 bg-yellow-50',
         Low: 'border-blue-500 bg-blue-50',
     };
 
+    // Filter projects to find those at risk.
     const atRiskProjects = MOCK_PROJECTS.filter(p => p.status === ProjectStatus.AtRisk || p.status === ProjectStatus.OffTrack);
 
+    // State for the Website Conversion Analysis feature.
     const [analysisUrl, setAnalysisUrl] = useState<string>('https://www.example.com');
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
     const [analysisResults, setAnalysisResults] = useState<UXAnalysisResult[]>([]);
     const [analysisError, setAnalysisError] = useState<string | null>(null);
     
+    // State for the AI's knowledge base.
     const [knowledge, setKnowledge] = useState<KnowledgeItem[]>(MOCK_COO_KNOWLEDGE);
     const [newKnowledgeContent, setNewKnowledgeContent] = useState('');
 
+    // Icon mapping for different knowledge types.
     const knowledgeIcons: Record<KnowledgeType, React.FC<{className?: string}>> = {
         [KnowledgeType.Document]: FileTextIcon,
         [KnowledgeType.Voice]: MicIcon,
         [KnowledgeType.Context]: InfoIcon,
     };
 
+    // Handlers for managing the knowledge base.
     const handleDeleteKnowledge = (id: string) => {
         setKnowledge(prev => prev.filter(item => item.id !== id));
     };
@@ -42,6 +49,7 @@ const COOAssistantView: React.FC = () => {
         if (!newKnowledgeContent.trim()) return;
         const newKnowledge: KnowledgeItem = {
             id: `coo-k${Date.now()}`,
+            // Simple logic to determine if the new item is a document or context.
             type: newKnowledgeContent.toLowerCase().match(/\.(pdf|docx|txt)$/) ? KnowledgeType.Document : KnowledgeType.Context,
             content: newKnowledgeContent,
         };
@@ -49,6 +57,11 @@ const COOAssistantView: React.FC = () => {
         setNewKnowledgeContent('');
     };
 
+    /**
+     * Handles the AI-powered website analysis.
+     * Constructs a prompt and schema, calls the secure backend function,
+     * and updates the state with the results or an error message.
+     */
     const handleAnalyzeWebsite = async () => {
         if (!analysisUrl.trim()) {
             setAnalysisError("Please enter a valid URL.");
@@ -69,18 +82,9 @@ const COOAssistantView: React.FC = () => {
                         items: {
                             type: SchemaType.OBJECT,
                             properties: {
-                                area: {
-                                    type: SchemaType.STRING,
-                                    description: "The specific area of the website being analyzed (e.g., 'Homepage Hero Section', 'Navigation Menu')."
-                                },
-                                finding: {
-                                    type: SchemaType.STRING,
-                                    description: "A concise description of the UX issue or opportunity identified."
-                                },
-                                recommendation: {
-                                    type: SchemaType.STRING,
-                                    description: "A concrete, actionable recommendation to address the finding."
-                                }
+                                area: { type: SchemaType.STRING, description: "The specific area of the website being analyzed (e.g., 'Homepage Hero Section', 'Navigation Menu')." },
+                                finding: { type: SchemaType.STRING, description: "A concise description of the UX issue or opportunity identified." },
+                                recommendation: { type: SchemaType.STRING, description: "A concrete, actionable recommendation to address the finding." }
                             },
                             required: ["area", "finding", "recommendation"]
                         }
@@ -99,6 +103,7 @@ const COOAssistantView: React.FC = () => {
         } catch (error) {
             console.error("Error analyzing website:", error);
             setAnalysisError("Failed to analyze the website. The AI may be experiencing issues. Using mock data for demonstration.");
+            // Fallback to mock data on error to ensure a good demo experience.
             setAnalysisResults([
                  { area: "Homepage Call-to-Action", finding: "The primary CTA button ('Learn More') is generic and lacks a compelling value proposition, leading to low click-through rates.", recommendation: "Change the button text to be more action-oriented and benefit-driven, such as 'Get Your Free Demo' or 'Start Automating Now'."},
                  { area: "Pricing Page", finding: "The pricing tiers are confusing and it's difficult for users to quickly determine the best plan for their needs.", recommendation: "Simplify the layout by using a comparison table with clear feature checkmarks. Add a 'Most Popular' tag to guide users and include a short quiz to recommend a plan."},
