@@ -39,7 +39,7 @@ There are two types of environment variables used in this application:
 -   **Procedure for Administrator**:
     1.  Add the four variables listed above to your deployment platform's environment settings.
     2.  Fill in the corresponding values from your Airtable account.
-    3.  **Crucially, do not add the `VITE_` prefix.** These are sensitive credentials that are handled securely by a serverless function. Exposing them to the client will cause the build to fail.
+    3.  **CRITICAL**: Do not add the `VITE_` prefix to these keys. These are sensitive credentials handled securely by a serverless function. Exposing them to the client by adding the `VITE_` prefix is a security risk and will cause the deployment to be blocked by Netlify's secrets scanner.
     4.  Redeploy the application for the changes to take effect.
 
 ### 5. Firebase (Client-Side)
@@ -53,5 +53,5 @@ There are two types of environment variables used in this application:
 ### Verifying Connections
 
 -   After setting variables and redeploying, navigate to the **Settings** page in Maxwell Vantage. The integrations should show a "Connected" status.
--   If the **Projects Assistant** shows "Using Mock Data", the `AIRTABLE_` variables are likely incorrect or missing. Check your deployment platform's settings and redeploy.
+-   If the **Projects Assistant** shows "Using Mock Data", the `AIRTABLE_...` variables are likely incorrect or missing. Check your deployment platform's settings and redeploy.
 -   If an integration is not connected, the most common cause is a mistyped variable name or value, or forgetting to redeploy the application.
