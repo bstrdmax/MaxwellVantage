@@ -77,6 +77,7 @@ If you haven't already, ensure your entire project, including the `netlify/funct
 
 Netlify should detect your build settings automatically from your project configuration. You should verify they are correct.
 
+-   **Node.js Version**: The required Node.js version is specified in the `.nvmrc` file at the root of the project. Netlify will automatically detect and use this version (currently Node 20 LTS). No manual configuration is required in the Netlify UI.
 -   **Base directory**: (leave blank unless your project is in a subdirectory)
 -   **Build command**: `npm run build`
 -   **Publish directory**: `dist`
