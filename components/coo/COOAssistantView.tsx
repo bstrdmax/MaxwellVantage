@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
 import Card from '../ui/Card';
 import { MOCK_COO_INSIGHTS, MOCK_STRATEGIC_GOALS, MOCK_TOP_PRIORITY, MOCK_PROJECTS, MOCK_STRATEGIC_ADVICE, AirtableIcon, GlobeIcon, LayoutIcon, SearchIcon, MOCK_COO_KNOWLEDGE, FileTextIcon, MicIcon, InfoIcon, PlusCircleIcon, Trash2Icon, AlertTriangleIcon, TargetIcon } from '../../constants';
 import type { COOInsight, StrategicAdvice, UXAnalysisResult, KnowledgeItem } from '../../types';
 import { ProjectStatus, KnowledgeType } from '../../types';
+import { callGemini, SchemaType } from '../../src/utils/ai';
 
 const sourceIcons: Record<StrategicAdvice['source'], React.FC<{className?: string}>> = {
     Airtable: AirtableIcon,
@@ -60,43 +59,37 @@ const COOAssistantView: React.FC = () => {
         setAnalysisResults([]);
 
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: `As a world-class UX/UI and conversion rate optimization expert, analyze the website at the URL "${analysisUrl}". Identify three critical areas for improvement to enhance client appeal and streamline the user journey towards the main offer. For each area, describe the specific finding and provide a concrete, actionable recommendation.`,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: Type.OBJECT,
-                        properties: {
-                            improvements: {
-                                type: Type.ARRAY,
-                                items: {
-                                    type: Type.OBJECT,
-                                    properties: {
-                                        area: {
-                                            type: Type.STRING,
-                                            description: "The specific area of the website being analyzed (e.g., 'Homepage Hero Section', 'Navigation Menu')."
-                                        },
-                                        finding: {
-                                            type: Type.STRING,
-                                            description: "A concise description of the UX issue or opportunity identified."
-                                        },
-                                        recommendation: {
-                                            type: Type.STRING,
-                                            description: "A concrete, actionable recommendation to address the finding."
-                                        }
-                                    },
-                                    required: ["area", "finding", "recommendation"]
+            const prompt = `As a world-class UX/UI and conversion rate optimization expert, analyze the website at the URL "${analysisUrl}". Identify three critical areas for improvement to enhance client appeal and streamline the user journey towards the main offer. For each area, describe the specific finding and provide a concrete, actionable recommendation.`;
+            
+            const schema = {
+                type: SchemaType.OBJECT,
+                properties: {
+                    improvements: {
+                        type: SchemaType.ARRAY,
+                        items: {
+                            type: SchemaType.OBJECT,
+                            properties: {
+                                area: {
+                                    type: SchemaType.STRING,
+                                    description: "The specific area of the website being analyzed (e.g., 'Homepage Hero Section', 'Navigation Menu')."
+                                },
+                                finding: {
+                                    type: SchemaType.STRING,
+                                    description: "A concise description of the UX issue or opportunity identified."
+                                },
+                                recommendation: {
+                                    type: SchemaType.STRING,
+                                    description: "A concrete, actionable recommendation to address the finding."
                                 }
-                            }
-                        },
-                        required: ["improvements"]
+                            },
+                            required: ["area", "finding", "recommendation"]
+                        }
                     }
-                }
-            });
+                },
+                required: ["improvements"]
+            };
 
-            const jsonResponse = JSON.parse(response.text);
+            const jsonResponse = await callGemini({ prompt, schema });
             if (jsonResponse.improvements && Array.isArray(jsonResponse.improvements)) {
                  setAnalysisResults(jsonResponse.improvements);
             } else {
