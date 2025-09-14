@@ -2,7 +2,6 @@
 import React from 'react';
 import Card from '../ui/Card';
 import { MOCK_CONTENT_CALENDAR } from '../../constants';
-import type { Content } from '../../types';
 import { ContentType } from '../../types';
 
 const ContentCalendarView: React.FC = () => {
