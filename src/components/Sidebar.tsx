@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DashboardIcon, ProjectsIcon, ProspectsIcon, ContentIcon, SettingsIcon, FolderIcon, MailIcon, BrainCircuitIcon, ZapIcon } from '../constants';
+import { DashboardIcon, ProjectsIcon, ProspectsIcon, ContentIcon, SettingsIcon, FolderIcon, MailIcon, BrainCircuitIcon } from '../constants';
 
 type ViewType = 'Dashboard' | 'Projects Assistant' | 'Prospects Assistant' | 'Content Assistant' | 'Email VA Assistant' | 'COO Assistant' | 'Settings';
 
