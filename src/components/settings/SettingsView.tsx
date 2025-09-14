@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../ui/Card';
 import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon } from '../../constants';
