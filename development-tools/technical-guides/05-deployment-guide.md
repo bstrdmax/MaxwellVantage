@@ -38,6 +38,7 @@ Your Firebase project is also a Google Cloud Platform (GCP) project. You need to
 -   Search for and **enable** the following APIs:
     1.  **Google Drive API** (for the Projects and Content Assistants)
     2.  **Gmail API** (for the Email VA)
+    3.  **Google Generative AI API** (sometimes listed as "Vertex AI", ensure your account has access)
 
 ### 4. Configure the OAuth Consent Screen
 This is the screen your users will see when they grant the application permission to access their Google data. **This step is mandatory.**
