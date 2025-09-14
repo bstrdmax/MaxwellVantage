@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
 import Card from '../ui/Card';
-import { MOCK_CONTENT_IDEAS, MOCK_GENERATED_CONTENT, MOCK_DRIVE_IDEAS, GoogleDriveIcon, AirtableIcon, MOCK_CONTENT_CALENDAR, MOCK_CONTENT_CONTEXT, FileTextIcon, PlusCircleIcon, Trash2Icon, CheckCircleIcon, BrainCircuitIcon, PenToolIcon, BookOpenIcon, ClipboardCopyIcon } from '../../constants';
+import { MOCK_CONTENT_IDEAS, MOCK_GENERATED_CONTENT, MOCK_DRIVE_IDEAS, GoogleDriveIcon, AirtableIcon, MOCK_CONTENT_CALENDAR, MOCK_CONTENT_CONTEXT, PlusCircleIcon, Trash2Icon, CheckCircleIcon, BrainCircuitIcon, PenToolIcon, BookOpenIcon, ClipboardCopyIcon } from '../../constants';
 import type { GeneratedContent, ContentIdea, Content, ContentContext } from '../../types';
 import { ContentType, GeneratedContentStatus } from '../../types';
+import { callGemini, SchemaType } from '../../src/utils/ai';
 
 // Icons
 const SparklesIcon = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 3-1.9 1.9-1.4-1.4-1.9 1.9-1.4-1.4L3 6l1.4 1.4L2.5 9l1.9 1.9 1.4 1.4L6 15l1.4 1.4L9 18.3l1.9 1.9 1.4-1.4 1.9 1.9 1.4-1.4L21 18l-1.4-1.4L21.5 15l-1.9-1.9-1.4-1.4L18 9l-1.4-1.4L15 5.7l-1.9-1.9Z"/></svg>;
@@ -197,8 +196,6 @@ const ContentAssistantView: React.FC<ContentAssistantViewProps> = ({ addNotifica
         setIsGenerating(true);
         
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-            
             const prompt = `
                 Based on the following context, generate 3 pieces of content (a blog post, a LinkedIn post, and a newsletter snippet) for the given topic.
 
@@ -212,45 +209,38 @@ const ContentAssistantView: React.FC<ContentAssistantViewProps> = ({ addNotifica
                 "${topic}"
             `;
 
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: Type.OBJECT,
+            const schema = {
+                type: SchemaType.OBJECT,
+                properties: {
+                    blogPost: {
+                        type: SchemaType.OBJECT,
                         properties: {
-                            blogPost: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    title: { type: Type.STRING },
-                                    body: { type: Type.STRING }
-                                },
-                                required: ["title", "body"]
-                            },
-                            linkedInPost: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    title: { type: Type.STRING },
-                                    body: { type: Type.STRING }
-                                },
-                                required: ["title", "body"]
-                            },
-                            newsletter: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    title: { type: Type.STRING },
-                                    body: { type: Type.STRING }
-                                },
-                                required: ["title", "body"]
-                            }
+                            title: { type: SchemaType.STRING },
+                            body: { type: SchemaType.STRING }
                         },
-                        required: ["blogPost", "linkedInPost", "newsletter"]
+                        required: ["title", "body"]
+                    },
+                    linkedInPost: {
+                        type: SchemaType.OBJECT,
+                        properties: {
+                            title: { type: SchemaType.STRING },
+                            body: { type: SchemaType.STRING }
+                        },
+                        required: ["title", "body"]
+                    },
+                    newsletter: {
+                        type: SchemaType.OBJECT,
+                        properties: {
+                            title: { type: SchemaType.STRING },
+                            body: { type: SchemaType.STRING }
+                        },
+                        required: ["title", "body"]
                     }
-                }
-            });
+                },
+                required: ["blogPost", "linkedInPost", "newsletter"]
+            };
 
-            const result = JSON.parse(response.text);
+            const result = await callGemini({ prompt, schema });
 
             const newIdea: ContentIdea = {
                 id: `idea-${Date.now()}`,
