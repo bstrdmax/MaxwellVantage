@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Card from '../ui/Card';
+// FIX: Added missing HeartIcon to imports.
 import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon } from '../../constants';
 
 const SettingsView = () => {
