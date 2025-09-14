@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import Overview from './components/dashboard/Overview';
-import ProjectsView from './components/projects/ProjectsView';
-import ProspectsView from './components/prospects/ProspectsView';
-import ContentAssistantView from './components/content/ContentAssistantView';
-import EmailVAView from './components/email/EmailVAView';
-import COOAssistantView from './components/coo/COOAssistantView';
-import SettingsView from './components/settings/SettingsView';
 import Footer from './components/Footer';
 import LoginView from './components/auth/LoginView';
 import { useAuth } from './contexts/AuthContext';
 import { MOCK_NOTIFICATIONS, MOCK_PROJECTS, BrainCircuitIcon } from './constants';
 import type { Notification, Project } from './types';
 import { ProjectStatus } from './types';
+
+// Lazily load the main view components to enable code-splitting.
+// This creates separate JavaScript chunks for each view, which are loaded on demand.
+const Overview = lazy(() => import('./components/dashboard/Overview'));
+const ProjectsView = lazy(() => import('./components/projects/ProjectsView'));
+const ProspectsView = lazy(() => import('./components/prospects/ProspectsView'));
+const ContentAssistantView = lazy(() => import('./components/content/ContentAssistantView'));
+const EmailVAView = lazy(() => import('./components/email/EmailVAView'));
+const COOAssistantView = lazy(() => import('./components/coo/COOAssistantView'));
+const SettingsView = lazy(() => import('./components/settings/SettingsView'));
+
 
 type ViewType = 'Dashboard' | 'Projects Assistant' | 'Prospects Assistant' | 'Content Assistant' | 'Email VA Assistant' | 'COO Assistant' | 'Settings';
 
@@ -25,6 +29,18 @@ const FullPageLoader: React.FC = () => (
         <div className="flex flex-col items-center">
             <BrainCircuitIcon className="h-12 w-12 text-[#6366f1] animate-pulse" />
             <p className="mt-4 text-slate-500">Initializing Maxwell Vantage...</p>
+        </div>
+    </div>
+);
+
+/**
+ * A loading indicator for the main content area, used as a fallback for React.Suspense.
+ */
+const ViewLoader: React.FC = () => (
+    <div className="flex h-full w-full items-center justify-center py-20">
+        <div className="flex flex-col items-center">
+            <BrainCircuitIcon className="h-10 w-10 text-[#6366f1] animate-pulse" />
+            <p className="mt-3 text-slate-500">Loading Assistant...</p>
         </div>
     </div>
 );
@@ -137,7 +153,9 @@ const App: React.FC = () => {
                 <Header notifications={notifications} />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#f8fafc] p-6 flex flex-col">
                     <div className="flex-grow">
-                        {renderContent()}
+                        <Suspense fallback={<ViewLoader />}>
+                            {renderContent()}
+                        </Suspense>
                     </div>
                     <Footer />
                 </main>
