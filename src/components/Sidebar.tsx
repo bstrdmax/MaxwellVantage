@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DashboardIcon, ProjectsIcon, ProspectsIcon, ContentIcon, SettingsIcon, FolderIcon, MailIcon, BrainCircuitIcon } from '../constants';
 
