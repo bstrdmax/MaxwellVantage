@@ -36,6 +36,12 @@ The application uses environment variables to handle API keys securely.
 # Google Gemini API Key (for the serverless function, NOT exposed to client)
 API_KEY=your_gemini_api_key_here
 
+# Airtable Credentials (SERVER-SIDE ONLY for security)
+AIRTABLE_API_KEY=your_airtable_api_key_here
+AIRTABLE_BASE_ID=your_airtable_base_id_here
+PROJECTS_TABLE_NAME=YourProjectsTableName
+PROSPECTS_TABLE_NAME=YourProspectsTableName
+
 # Firebase Credentials (safe to be exposed to client)
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
@@ -43,15 +49,9 @@ VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-
-# Airtable Credentials (safe to be exposed for read-only access, or use secure functions for writes)
-VITE_AIRTABLE_API_KEY=your_airtable_api_key_here
-VITE_AIRTABLE_BASE_ID=your_airtable_base_id_here
-VITE_PROJECTS_TABLE_NAME=YourProjectsTableName
-VITE_PROSPECTS_TABLE_NAME=YourProspectsTableName
 ```
 Replace the placeholder values with your actual credentials. 
-- The `API_KEY` is used by the Netlify CLI to simulate the server environment for your function.
+- The server-side keys (like `API_KEY` and `AIRTABLE_API_KEY`) are used by the Netlify CLI to simulate the server environment for your functions.
 - The `VITE_` prefix is required by Vite to expose variables to the client-side application code.
 
 ### 3. Running the Application
