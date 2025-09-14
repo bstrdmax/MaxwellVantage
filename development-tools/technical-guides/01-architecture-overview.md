@@ -1,35 +1,31 @@
 
 # Technical Guide: Architecture Overview
 
-This document provides a high-level overview of the Maxwell Vantage application's technical architecture.
+This document provides a high-level overview of the Maxwell Vantage application's technical architecture, which consists of a modern frontend and a secure serverless backend.
 
 ## Core Philosophy
 
-The application is designed as a modern, single-page application (SPA) built with a standard, production-ready toolchain. It prioritizes a fast development experience, type safety, and secure configuration management.
+The application is designed for security, performance, and a superior developer experience. It separates the client-side presentation layer from the secure backend logic, ensuring that sensitive API keys are never exposed to the browser.
 
-## Frontend Stack
+## Frontend Stack (Client-Side)
 
 -   **Framework**: **React 19** is the core library for building the user interface. The application is built with functional components and extensive use of React Hooks for state and lifecycle management.
 -   **Build Tool**: **Vite** is used as the build tool and development server. It provides an extremely fast Hot Module Replacement (HMR) experience and bundles the code for optimized production deployments.
--   **Language**: **TypeScript** is used for all `.tsx` files to provide static typing, which improves code quality, readability, and developer experience.
--   **Styling**: **Tailwind CSS** is used for all styling. It is integrated into the Vite build process via PostCSS, allowing for rapid, utility-first UI development directly within the component files.
--   **Modularity**: The application is broken down into a logical `src` directory structure:
-    -   `src/components/`: Contains the main views (`projects/`, `prospects/`, etc.) and reusable UI elements (`ui/`, `charts/`).
-    -   `src/App.tsx`: The root component that handles routing and state management.
-    -   `src/index.tsx`: The entry point that mounts the React application to the DOM.
+-   **Language**: **TypeScript** is used for all `.tsx` files to provide static typing.
+-   **Styling**: **Tailwind CSS** is used for all styling via PostCSS.
+-   **Authentication**: **Firebase Authentication** is integrated on the client-side to manage user login and sessions. The configuration keys are exposed safely via `VITE_` prefixed environment variables.
 
-## State Management
+## Backend (Serverless)
 
--   **Local State**: `useState` is the primary hook for managing component-level state.
--   **Global State**: For application-wide state (like the active view or notifications), state is "lifted up" to the root `App.tsx` component and passed down to child components via props.
--   **Persistent State**: `localStorage` is used for persisting user settings and configurations across sessions, such as the Onboarding Playbook templates and AI context settings.
+-   **Platform**: **Netlify Functions** written in TypeScript.
+-   **Architecture**: A single serverless function (`/netlify/functions/gemini.ts`) serves as a secure, lightweight backend.
+-   **Purpose**: This function acts as a **secure proxy**. The React frontend sends requests to this function, which then securely attaches the secret Gemini API key and forwards the request to the Google Gemini API. This is the core of the application's security model.
 
 ## AI & API Integration
 
--   **SDK**: The official **`@google/genai` SDK** is used for all interactions with the Gemini API.
--   **API Key Management**: API keys and other secrets are managed securely via **environment variables**.
-    -   Vite exposes these variables to the client-side code through the `import.meta.env` object.
-    -   For local development, keys are stored in a `.env` file (which is git-ignored).
-    -   For production, these variables must be configured in the hosting provider's settings.
-    -   This approach ensures that secret keys are never hard-coded into the source code.
--   **Structured Output**: The application heavily relies on Gemini's ability to return structured JSON data by providing a `responseSchema` in the API call. This eliminates the need for fragile string parsing and makes the integration robust.
+-   **Frontend-to-Backend Communication**: All AI-related requests from the React app are channeled through a single utility function: `src/utils/ai.ts -> callGemini()`. This function makes a `fetch` request to our Netlify Function endpoint (`/.netlify/functions/gemini`).
+-   **Backend AI SDK**: The official **`@google/genai` SDK** is used exclusively within the serverless function on the backend. It is **not** part of the frontend browser bundle.
+-   **API Key Management**: This is a critical aspect of the architecture:
+    -   The **Google Gemini API Key** is stored as a standard environment variable (`API_KEY`) on Netlify. It is only accessible by the serverless function and is **never** exposed to the client.
+    -   Client-side keys for services like **Firebase and Airtable** are managed via `VITE_` prefixed environment variables, which Vite safely embeds during the build process.
+-   **Structured Output**: The serverless function leverages Gemini's JSON mode by providing a `responseSchema` in the API call. It then passes the resulting JSON string back to the client, ensuring robust and predictable data transfer.
