@@ -1,3 +1,5 @@
+
+
 # Technical Guide: Deployment to Netlify
 
 This guide provides step-by-step instructions for deploying the Maxwell Vantage application to Netlify.
@@ -73,7 +75,7 @@ If you haven't already, ensure your entire project, including the `netlify/funct
 
 ## Step 3: Configure Build Settings
 
-Netlify will automatically detect the `netlify.toml` file in your repository and pre-fill the build settings. You should verify they are correct.
+Netlify should detect your build settings automatically from your project configuration. You should verify they are correct.
 
 -   **Base directory**: (leave blank unless your project is in a subdirectory)
 -   **Build command**: `npm run build`
@@ -91,6 +93,8 @@ This is the most important step for ensuring your application works and your API
 1.  Before clicking "Deploy", navigate to the **"Site settings"** for your new site.
 2.  Go to the **"Build & deploy"** section and then to the **"Environment"** sub-section.
 3.  Click **"Edit variables"** and add the following keys one by one.
+
+> **SECURITY WARNING:** The `API_KEY` for Google Gemini is a highly sensitive secret. It **MUST** be configured as a server-side variable as described below. **DO NOT** create a variable named `VITE_API_KEY` in Netlify. Prefixing a variable with `VITE_` exposes it to the browser, which would leak your secret key and cause the build to fail due to Netlify's secrets scanning.
 
 ### 4.1 Server-Side Variables
 This variable is only accessible by the Netlify function, keeping it secure.
@@ -143,6 +147,6 @@ These variables are prefixed with `VITE_`, which makes them accessible in your f
 
 ## Troubleshooting
 
--   **"Function not found" or 404 errors on AI calls**: Check that your `netlify.toml` has the correct `functions = "netlify/functions"` line and that your code is calling `/.netlify/functions/gemini`.
--   **AI features return errors**: Go to the **"Functions"** tab in your Netlify site dashboard and check the logs for your `gemini` function. The logs will often contain specific error messages from the AI or point to missing API keys.
+-   **"Function not found" or 404 errors on AI calls**: Ensure your build settings in Netlify correctly specify the functions directory (`netlify/functions`).
+-   **AI features return errors**: Go to the **"Functions"** tab in your Netlify site dashboard and check the logs for your `gemini` function. The logs will often contain specific error messages from the AI or point to a missing `API_KEY`.
 -   **Airtable/Firebase not working**: This is almost always due to incorrect or missing `VITE_` environment variables. Go back to Step 4 and carefully verify each key and value. Remember to redeploy after any change to environment variables.
