@@ -2,8 +2,6 @@
 import React, { useState, useMemo } from 'react';
 import Card from '../ui/Card';
 import { MOCK_EMAILS, MOCK_MORNING_SUMMARY, MOCK_AFTERNOON_SUMMARY, MOCK_SUGGESTED_RESPONSES } from '../../constants';
-// FIX: Added missing type imports for Email and SuggestedResponse.
-import type { Email, SuggestedResponse } from '../../types';
 
 // Icons for the view
 const SendIcon = () => (
@@ -28,7 +26,6 @@ const EmailVAView: React.FC = () => {
     const currentSummary = activeBatch === 'morning' ? MOCK_MORNING_SUMMARY : MOCK_AFTERNOON_SUMMARY;
     
     const selectedEmail = currentEmails.find(e => e.id === selectedEmailId);
-    // FIX: Changed r.id to r.emailId to match the SuggestedResponse type and fix runtime error.
     const suggestedResponse = MOCK_SUGGESTED_RESPONSES.find(r => r.emailId === selectedEmailId);
 
     return (
