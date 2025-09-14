@@ -119,7 +119,6 @@ These variables are prefixed with `VITE_`, which makes them accessible in your f
 | `VITE_FIREBASE_STORAGE_BUCKET`| Your Firebase Storage Bucket | From the `firebaseConfig` object (Step 0). |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Your Firebase Sender ID | From the `firebaseConfig` object (Step 0). |
 | `VITE_FIREBASE_APP_ID` | Your Firebase App ID | From the `firebaseConfig` object (Step 0). |
-| `VITE_PROSPECTS_TABLE_NAME`| `YourAirtableProspectsTableName`| The exact name of the table for prospects. |
 
 **Double-check that you have entered all variables correctly.** A mistake here is the most common cause of deployment failure.
 
@@ -151,4 +150,4 @@ These variables are prefixed with `VITE_`, which makes them accessible in your f
 
 -   **"Function not found" or 404 errors on AI/Airtable calls**: Ensure your build settings in Netlify correctly specify the functions directory (`netlify/functions`).
 -   **AI features return errors**: Go to the **"Functions"** tab in your Netlify site dashboard and check the logs for your `gemini` function. The logs will often contain specific error messages from the AI or point to a missing `API_KEY`.
--   **Airtable/Firebase not working**: This is almost always due to incorrect or missing environment variables. Go back to Step 4 and carefully verify each key and value. Remember to redeploy after any change to environment variables.
+-   **Airtable/Firebase not working**: This is almost always due to incorrect or missing environment variables.
