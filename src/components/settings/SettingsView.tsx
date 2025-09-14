@@ -1,7 +1,6 @@
 
-import React from 'react';
 import Card from '../ui/Card';
-import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon, InfoIcon } from '../../constants';
+import { GoogleDriveIcon, AirtableIcon, UserIcon, LinkIcon, InfoIcon } from '../../constants';
 
 const SettingsView = () => {
   const isAirtableConnected = import.meta.env.VITE_AIRTABLE_API_KEY && import.meta.env.VITE_AIRTABLE_BASE_ID;
