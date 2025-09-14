@@ -11,34 +11,46 @@ This guide outlines the standard procedures for connecting and managing third-pa
 ### 1. Accessing the Integrations Hub
 
 -   **Action**: Navigate to **Settings** from the sidebar. The **Integrations Hub** card is located on this page.
--   **Purpose**: This hub is the central location for managing connections to external services like Google Workspace and Airtable.
+-   **Purpose**: This hub is the central location for viewing the connection status of external services like Google Workspace and Airtable.
 
-### 2. Google Workspace
+### 2. Connection Method: Environment Variables
 
--   **Functionality**:
-    -   **Projects Assistant**: Allows the AI to create onboarding documents in Google Docs/Sheets.
-    -   **Content Assistant**: Enables saving generated content drafts to Google Drive.
--   **Status**:
-    -   This integration is currently a **mock-up**. In a production environment, this would involve an OAuth flow.
--   **Procedure to Connect**:
-    1.  (Mock) Click the **"Connect"** button.
-    2.  You would be redirected to a Google authentication screen to grant permissions.
+All integrations in Maxwell Vantage are managed via **Environment Variables** in your deployment platform (e.g., Netlify). This is a security best practice that keeps secret keys out of the source code.
 
-### 3. Airtable
+There are two types of environment variables used in this application:
+
+1.  **Server-Side Variables**: These are the most secure and are **only** accessible by the backend serverless functions. They are never exposed to the user's browser.
+2.  **Client-Side Variables (prefixed with `VITE_`)**: These are made available to the React frontend code. They should be used for services that require initialization in the browser (like Firebase or a read-only Airtable key).
+
+### 3. Google Gemini API (Server-Side)
+
+-   **Functionality**: Powers all AI features in the application.
+-   **Variable Name**: `API_KEY`
+-   **Procedure for Administrator**:
+    1.  In your deployment platform's settings, add an environment variable with the key `API_KEY`.
+    2.  Set its value to your secret Google Gemini API Key.
+    3.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server.
+
+### 4. Airtable (Client-Side)
 
 -   **Functionality**:
     -   **Projects Assistant**: Syncs the "All Projects" view from an Airtable base.
     -   **Prospects Assistant**: Allows syncing of qualified prospects from Vantage *to* an Airtable base.
--   **Connection Method**: The Airtable connection is managed via **Environment Variables**, not through the user interface. This is a security measure to protect your API key.
+-   **Variable Names**: `VITE_AIRTABLE_API_KEY`, `VITE_AIRTABLE_BASE_ID`, `VITE_PROJECTS_TABLE_NAME`, `VITE_PROSPECTS_TABLE_NAME`
 -   **Procedure for Administrator**:
-    1.  **Obtain Credentials**: Get the Airtable API Key, Base ID, Projects Table Name, and Prospects Table Name from your Airtable account.
-    2.  **Set Environment Variables**: In your deployment platform (e.g., Netlify, Vercel), navigate to the site's settings and find the "Environment Variables" section.
-    3.  **Add the following variables**:
-        -   `VITE_AIRTABLE_API_KEY`
-        -   `VITE_AIRTABLE_BASE_ID`
-        -   `VITE_PROJECTS_TABLE_NAME`
-        -   `VITE_PROSPECTS_TABLE_NAME`
-    4.  **Redeploy**: Save the variables and trigger a new deployment of the application for the changes to take effect.
--   **Verifying the Connection**:
-    -   Once the variables are set, navigate to the **Settings** page in Maxwell Vantage. The Airtable integration should show a green "Connected" status.
-    -   If it shows "Not Connected", verify that the environment variables were entered correctly and the site has been redeployed.
+    1.  Add the four `VITE_` prefixed variables listed above to your deployment platform's environment settings.
+    2.  Fill in the corresponding values from your Airtable account.
+    3.  Redeploy the application for the changes to take effect.
+
+### 5. Firebase (Client-Side)
+
+-   **Functionality**: Manages user authentication (login, logout, session state).
+-   **Variable Names**: `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, etc. (See deployment guide for the full list).
+-   **Procedure for Administrator**:
+    1.  In your Firebase project settings, find your web app's configuration object.
+    2.  Add each key-value pair from that object as an environment variable in your deployment platform, making sure to prefix each key with `VITE_`.
+
+### Verifying Connections
+
+-   After setting variables and redeploying, navigate to the **Settings** page in Maxwell Vantage. The integrations should show a "Connected" status.
+-   If an integration is not connected, the most common cause is a mistyped variable name or value, or forgetting to redeploy the application.
