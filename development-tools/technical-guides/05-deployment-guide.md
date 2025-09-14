@@ -95,10 +95,22 @@ This is the most important step for ensuring your application works and your API
 2.  Go to the **"Build & deploy"** section and then to the **"Environment"** sub-section.
 3.  Click **"Edit variables"** and add the following keys one by one.
 
-> **SECURITY WARNING:** The `API_KEY` for Google Gemini and all Airtable credentials are highly sensitive secrets. They **MUST** be configured as server-side variables as described below. **DO NOT** create a variable named `VITE_API_KEY` or `VITE_AIRTABLE_...` in Netlify. Prefixing a variable with `VITE_` exposes it to the browser, which would leak your secret key and cause the build to fail due to Netlify's secrets scanning.
+<br>
 
-### 4.1 Server-Side Variables (Secure)
-These variables are only accessible by the Netlify functions, keeping them secure.
+> [!CAUTION]
+> **CRITICAL SECURITY WARNING**
+> 
+> You **MUST** configure your environment variables exactly as described below. A common error is incorrectly prefixing secret keys with `VITE_`.
+> 
+> - **Correct (Secure):** `AIRTABLE_API_KEY`
+> - **INCORRECT (Insecure):** `VITE_AIRTABLE_API_KEY`
+> 
+> Prefixing a secret key like the Airtable or Gemini key with `VITE_` will **expose it to the public internet** and will **cause your build to fail**.
+
+<br>
+
+### 4.1 Server-Side Variables (Secrets)
+These variables are only accessible by the backend functions and are kept secure. **DO NOT add a `VITE_` prefix to these.**
 
 | Key | Value | Description |
 | :-- | :---- | :---------- |
@@ -109,7 +121,7 @@ These variables are only accessible by the Netlify functions, keeping them secur
 | `PROSPECTS_TABLE_NAME`| `YourAirtableProspectsTableName`| The exact name of the table for prospects. |
 
 ### 4.2 Client-Side Variables (Public)
-These variables are prefixed with `VITE_`, which makes them accessible in your frontend React code.
+These variables are prefixed with `VITE_` and are safe to be exposed to the browser. Only Firebase keys should be in this section.
 
 | Key | Value | Description |
 | :-- | :---- | :---------- |
@@ -150,4 +162,4 @@ These variables are prefixed with `VITE_`, which makes them accessible in your f
 
 -   **"Function not found" or 404 errors on AI/Airtable calls**: Ensure your build settings in Netlify correctly specify the functions directory (`netlify/functions`).
 -   **AI features return errors**: Go to the **"Functions"** tab in your Netlify site dashboard and check the logs for your `gemini` function. The logs will often contain specific error messages from the AI or point to a missing `API_KEY`.
--   **Airtable/Firebase not working**: This is almost always due to incorrect or missing environment variables.
+-   **Airtable/Firebase not working**: This is almost always due to incorrect or missing environment variables. Go back to Step 4 and carefully verify each key and value. Remember to redeploy after any change to environment variables.
