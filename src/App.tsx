@@ -17,6 +17,9 @@ import { ProjectStatus } from './types';
 
 type ViewType = 'Dashboard' | 'Projects Assistant' | 'Prospects Assistant' | 'Content Assistant' | 'Email VA Assistant' | 'COO Assistant' | 'Settings';
 
+/**
+ * A full-page loading indicator shown while the authentication state is being determined.
+ */
 const FullPageLoader: React.FC = () => (
     <div className="flex h-screen w-screen items-center justify-center bg-[#f8fafc]">
         <div className="flex flex-col items-center">
@@ -26,14 +29,21 @@ const FullPageLoader: React.FC = () => (
     </div>
 );
 
-
+/**
+ * The root component of the application. It handles authentication state,
+ * main view routing, and manages global state like notifications.
+ */
 const App: React.FC = () => {
+    // useAuth hook provides the current user and loading status from Firebase.
     const { currentUser, loading } = useAuth();
+    // Manages which main view is currently displayed (e.g., 'Dashboard', 'Projects Assistant').
     const [activeView, setActiveView] = useState<ViewType>('Dashboard');
     
+    // State for notifications, initialized with mock data and dynamically generated deadline alerts.
     const [notifications, setNotifications] = useState<Notification[]>(() => {
         const initialNotifications = [...MOCK_NOTIFICATIONS];
         
+        // Logic to create notifications for projects with approaching or past deadlines.
         const deadlineNotifications: Notification[] = MOCK_PROJECTS
             .map((project: Project) => {
                 if (project.status === ProjectStatus.Completed) {
@@ -66,10 +76,15 @@ const App: React.FC = () => {
                 return null;
             })
             .filter((n): n is Notification => n !== null);
-
+        
+        // Prepend deadline notifications so they are most visible.
         return [...deadlineNotifications, ...initialNotifications];
     });
 
+    /**
+     * A function passed down to child components to allow them to add new notifications.
+     * @param message - The content of the notification to be displayed.
+     */
     const addNotification = (message: string) => {
         const newNotification: Notification = {
             id: `notif${Date.now()}`,
@@ -80,6 +95,9 @@ const App: React.FC = () => {
         setNotifications(prev => [newNotification, ...prev]);
     };
 
+    /**
+     * Renders the main content view based on the `activeView` state.
+     */
     const renderContent = () => {
         switch (activeView) {
             case 'Dashboard':
@@ -101,14 +119,17 @@ const App: React.FC = () => {
         }
     };
 
+    // While Firebase is checking the auth state, show a loader.
     if (loading) {
         return <FullPageLoader />;
     }
 
+    // If not loading and there's no user, show the login view.
     if (!currentUser) {
         return <LoginView />;
     }
 
+    // If a user is logged in, render the main application layout.
     return (
         <div className="flex h-screen bg-[#f8fafc] text-[#1e293b] font-sans">
             <Sidebar activeView={activeView} setActiveView={setActiveView} />
