@@ -25,7 +25,12 @@ const Header: React.FC<HeaderProps> = ({ notifications }) => {
     return (
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6">
             <div className="flex items-center">
-                {/* Search bar can remain */}
+                {/* FIX: Added the search bar back into the header. */}
+                <input
+                    type="text"
+                    placeholder="Search for projects, clients..."
+                    className="bg-slate-100 text-[#1e293b] placeholder-slate-400 rounded-lg px-4 py-2 w-80 focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+                />
             </div>
             <div className="flex items-center space-x-6">
                 <button className="relative text-slate-500 hover:text-[#1e293b]">
