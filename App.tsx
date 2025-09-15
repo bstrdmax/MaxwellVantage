@@ -1,3 +1,4 @@
+
 import React, { useState, lazy, Suspense, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -101,6 +102,7 @@ const App: React.FC = () => {
      * A function passed down to child components to allow them to add new notifications.
      * @param message - The content of the notification to be displayed.
      */
+    // FIX: Use functional update for setNotifications to avoid stale state and remove 'notifications' from dependency array.
     const addNotification = useCallback((message: string) => {
         const newNotification: Notification = {
             id: `notif${Date.now()}`,
@@ -117,7 +119,7 @@ const App: React.FC = () => {
     const renderContent = () => {
         switch (activeView) {
             case 'Dashboard':
-                return <Overview />;
+                return <Overview addNotification={addNotification} />;
             case 'Projects Assistant':
                 return <ProjectsView addNotification={addNotification} />;
             case 'Prospects Assistant':
@@ -127,11 +129,11 @@ const App: React.FC = () => {
             case 'Email VA Assistant':
                 return <EmailVAView />;
             case 'COO Assistant':
-                return <COOAssistantView />;
+                return <COOAssistantView addNotification={addNotification} />;
             case 'Settings':
                 return <SettingsView />;
             default:
-                return <Overview />;
+                return <Overview addNotification={addNotification} />;
         }
     };
 
