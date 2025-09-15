@@ -1,37 +1,29 @@
-# Netlify configuration file for Maxwell Vantage
-
-# Build settings: Specifies the command to build the site and the output directory.
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
 
-# Functions settings: Tells Netlify where the serverless functions are located.
-[functions]
-  directory = "netlify/functions"
-
-# Redirect rule for Single Page Applications (SPA).
-# This ensures that client-side routing works correctly by redirecting all paths to index.html.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Secrets scanning configuration.
-# This is the critical part to fix the build error.
-[secrets]
-  # Omit specific environment variable keys from being scanned.
-  # This prevents false positives when the key names (which are not secret)
-  # appear in documentation or code.
+[build.environment]
+  # Specify the Node.js version to use for the build, matching package.json
+  NODE_VERSION = "20"
+
+# Secrets scanning configuration to prevent build failures
+[secrets_scanning]
+  # A list of secret keys that should be ignored by the scanner.
+  # This is necessary because our documentation files reference these keys by name.
   omit_keys = [
-    "API_KEY",
     "AIRTABLE_API_KEY",
     "AIRTABLE_BASE_ID",
-    "PROJECTS_TABLE_NAME",
-    "PROSPECTS_TABLE_NAME",
+    "API_KEY",
     "VITE_FIREBASE_API_KEY",
+    "VITE_FIREBASE_APP_ID",
     "VITE_FIREBASE_AUTH_DOMAIN",
-    "VITE_FIREBASE_PROJECT_ID",
-    "VITE_FIREBASE_STORAGE_BUCKET",
     "VITE_FIREBASE_MESSAGING_SENDER_ID",
-    "VITE_FIREBASE_APP_ID"
+    "VITE_FIREBASE_PROJECT_ID",
+    "VITE_FIREBASE_STORAGE_BUCKET"
   ]
