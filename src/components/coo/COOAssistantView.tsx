@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import Card from '../ui/Card';
-import { MOCK_COO_INSIGHTS, MOCK_STRATEGIC_GOALS, MOCK_TOP_PRIORITY, MOCK_PROJECTS, MOCK_STRATEGIC_ADVICE, AirtableIcon, GlobeIcon, LayoutIcon, SearchIcon, MOCK_COO_KNOWLEDGE, FileTextIcon, MicIcon, InfoIcon, PlusCircleIcon, Trash2Icon, AlertTriangleIcon, TargetIcon } from '../../constants';
-import type { COOInsight, StrategicAdvice, UXAnalysisResult, KnowledgeItem } from '../../types';
+import { MOCK_COO_INSIGHTS, MOCK_STRATEGIC_GOALS, MOCK_TOP_PRIORITY, MOCK_STRATEGIC_ADVICE, AirtableIcon, GlobeIcon, LayoutIcon, SearchIcon, MOCK_COO_KNOWLEDGE, FileTextIcon, MicIcon, InfoIcon, PlusCircleIcon, Trash2Icon, AlertTriangleIcon, TargetIcon } from '../../constants';
+import type { COOInsight, StrategicAdvice, UXAnalysisResult, KnowledgeItem, Project } from '../../types';
 import { ProjectStatus, KnowledgeType } from '../../types';
 import { callGemini, SchemaType } from '../../utils/ai';
 
@@ -12,14 +12,18 @@ const sourceIcons: Record<StrategicAdvice['source'], React.FC<{className?: strin
     'Landing Page': LayoutIcon,
 };
 
-const COOAssistantView: React.FC = () => {
+interface COOAssistantViewProps {
+    projects: Project[];
+}
+
+const COOAssistantView: React.FC<COOAssistantViewProps> = ({ projects }) => {
     const priorityColors: Record<COOInsight['priority'], string> = {
         High: 'border-red-500 bg-red-50',
         Medium: 'border-yellow-500 bg-yellow-50',
         Low: 'border-blue-500 bg-blue-50',
     };
 
-    const atRiskProjects = MOCK_PROJECTS.filter(p => p.status === ProjectStatus.AtRisk || p.status === ProjectStatus.OffTrack);
+    const atRiskProjects = projects.filter(p => p.status === ProjectStatus.AtRisk || p.status === ProjectStatus.OffTrack);
 
     const [analysisUrl, setAnalysisUrl] = useState<string>('https://www.example.com');
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
