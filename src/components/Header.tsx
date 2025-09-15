@@ -1,7 +1,7 @@
 import React from 'react';
 import { getAuth, signOut } from 'firebase/auth';
-import { BellIcon, UserIcon } from '../constants';
-import type { Notification } from '../types';
+import { BellIcon, UserIcon } from '../../constants';
+import type { Notification } from '../../types';
 import { useAuth } from '../contexts/AuthContext';
 import { app } from '../firebase';
 
