@@ -1,5 +1,3 @@
-
-
 # Desk Procedure: Integration Configuration
 
 **Role:** Workspace Owner / Administrator
@@ -26,18 +24,17 @@ There are two types of environment variables used in this application:
 ### 3. Google Gemini API (Server-Side)
 
 -   **Functionality**: Powers all AI features in the application.
--   **Variable Name**: `API_KEY`
+-   **Configuration**: Set your Google Gemini API key as a server-side environment variable in your deployment platform.
 -   **Procedure for Administrator**:
-    1.  In your deployment platform's settings, add an environment variable with the key `API_KEY`.
-    2.  Set its value to your secret Google Gemini API Key.
-    3.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server.
+    1.  In your deployment platform's settings, add an environment variable for your secret Google Gemini API Key.
+    2.  **Crucially, do not add the `VITE_` prefix.** This ensures the key remains secure on the server. The application's backend expects this variable to be named `API_KEY`.
 
 ### 4. Airtable (Server-Side)
 
 -   **Functionality**: Syncs project and prospect data.
--   **Variable Names**: `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `PROJECTS_TABLE_NAME`, `PROSPECTS_TABLE_NAME`
+-   **Configuration**: You will need to set server-side environment variables for your Airtable API Key, your Base ID, and the names of your Projects and Prospects tables.
 -   **Procedure for Administrator**:
-    1.  Add the four variables listed above to your deployment platform's environment settings.
+    1.  Add the four required variables to your deployment platform's environment settings.
     2.  Fill in the corresponding values from your Airtable account.
     3.  **CRITICAL**: Do not add the `VITE_` prefix to these keys. These are sensitive credentials handled securely by a serverless function. Exposing them to the client by adding the `VITE_` prefix is a security risk and will cause the deployment to be blocked by Netlify's secrets scanner.
     4.  Redeploy the application for the changes to take effect.
@@ -45,10 +42,10 @@ There are two types of environment variables used in this application:
 ### 5. Firebase (Client-Side)
 
 -   **Functionality**: Manages user authentication (login, logout, session state).
--   **Variable Names**: `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, etc. (See deployment guide for the full list).
+-   **Configuration**: Set all keys from your Firebase web app configuration object as client-side environment variables.
 -   **Procedure for Administrator**:
     1.  In your Firebase project settings, find your web app's configuration object.
-    2.  Add each key-value pair from that object as an environment variable in your deployment platform, making sure to prefix each key with `VITE_`.
+    2.  Add each key-value pair from that object as an environment variable in your deployment platform, making sure to prefix each key with `VITE_`. For example, `apiKey` from Firebase should be an environment variable named `VITE_FIREBASE_API_KEY`.
 
 ### Verifying Connections
 
