@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Card from '../ui/Card';
-import { MOCK_PROJECTS, GoogleDriveIcon, MailIcon, FileTextIcon, ZapIcon, AirtableIcon, SparklesIcon, Trash2Icon, PlusCircleIcon, ClipboardListIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from '../../constants';
+import { GoogleDriveIcon, MailIcon, FileTextIcon, ZapIcon, AirtableIcon, SparklesIcon, Trash2Icon, PlusCircleIcon, ClipboardListIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from '../../constants';
 import type { Project } from '../../types';
 import { ProjectStatus } from '../../types';
 
@@ -27,6 +27,9 @@ interface OnboardingPlan {
 
 interface ProjectsViewProps {
     addNotification: (message: string) => void;
+    projects: Project[];
+    setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
+    isAirtableLive: boolean;
 }
 
 const getDeadlineStatus = (deadline: string, status: ProjectStatus) => {
@@ -62,8 +65,7 @@ const DEFAULT_DOC_TEMPLATES = [
 const DEFAULT_EMAIL_TEMPLATE = `Hi {client_name} team,\n\nWe are thrilled to officially kick off the "{project_name}" project with you!\n\nOur team is already setting up your dedicated project environment. Here are the immediate next steps:\n\n1.  **Project Kick-off Call:** Please expect a calendar invitation shortly for our official kick-off meeting next week.\n2.  **Shared Google Drive Folder:** You will receive a separate notification with access to a shared folder containing all project-related documents.\n3.  **Key Contact Person:** Your primary point of contact will be [Your Project Manager Name].\n\nWe are incredibly excited to partner with you and achieve great results together.\n\nBest regards,\nThe Team`;
 
 
-const ProjectsView: React.FC<ProjectsViewProps> = ({ addNotification }) => {
-  const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
+const ProjectsView: React.FC<ProjectsViewProps> = ({ addNotification, projects, setProjects, isAirtableLive }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [onboardingPlan, setOnboardingPlan] = useState<OnboardingPlan | null>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
@@ -85,43 +87,6 @@ const ProjectsView: React.FC<ProjectsViewProps> = ({ addNotification }) => {
   const [newDocTemplate, setNewDocTemplate] = useState('');
   const [isGeneratingDocs, setIsGeneratingDocs] = useState(false);
   const [isGeneratingEmail, setIsGeneratingEmail] = useState(false);
-  const [isAirtableLive, setIsAirtableLive] = useState(false);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch('/.netlify/functions/airtable');
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
-            if (response.status >= 500 && errorData.error?.includes("Server configuration error")) {
-                throw new Error('Server not configured for Airtable');
-            }
-            throw new Error(`Failed to fetch projects: ${errorData.error || response.statusText}`);
-        }
-        
-        const records = await response.json();
-        const fetchedProjects: Project[] = records.map((record: any) => ({
-            id: record.id,
-            name: record.fields.Name,
-            client: record.fields.Client,
-            status: record.fields.Status,
-            healthScore: record.fields['Health Score'],
-            deadline: record.fields.Deadline,
-            driveFolderUrl: record.fields['Drive Folder URL'] || '#',
-            origin: 'Airtable'
-        }));
-        setProjects(fetchedProjects);
-        setIsAirtableLive(true);
-      } catch (error) {
-        console.warn("Airtable fetch error:", error);
-        addNotification("Could not connect to Airtable. Using local mock data.");
-        setIsAirtableLive(false);
-        setProjects(MOCK_PROJECTS);
-      }
-    };
-    fetchProjects();
-  }, [addNotification]);
   
   useEffect(() => {
     try {
