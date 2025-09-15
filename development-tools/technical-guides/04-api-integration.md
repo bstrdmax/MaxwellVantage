@@ -90,7 +90,7 @@ This backend function is the only part of the system that holds the Gemini API k
 -   **Goal**: To securely process requests from the frontend and call the Gemini API.
 -   **Action**:
     1.  It receives the `POST` request from `callGemini`.
-    2.  It initializes the `GoogleGenAI` client using the `API_KEY` from its secure environment variables.
+    2.  It initializes the `GoogleGenAI` client using the `API_K​EY` from its secure environment variables.
     3.  It calls `ai.models.generateContent` using the prompt and schema from the request body.
     4.  It takes the JSON string from the Gemini response (`response.text`) and sends it back to the frontend.
 
