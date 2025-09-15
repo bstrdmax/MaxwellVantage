@@ -1,13 +1,19 @@
 
+
 import React from 'react';
 import Card from '../ui/Card';
 import StatCard from './StatCard';
 import RevenueChart from '../charts/RevenueChart';
-import { MOCK_PROJECTS, MOCK_RECENT_ACTIVITY } from '../../constants';
-import type { RecentActivity } from '../../types';
+import { MOCK_RECENT_ACTIVITY } from '../../constants';
+import type { RecentActivity, Project, Prospect } from '../../types';
 import { ProjectStatus } from '../../types';
 
-const ProjectHealth: React.FC = () => {
+interface OverviewProps {
+    projects: Project[];
+    prospects: Prospect[];
+}
+
+const ProjectHealth: React.FC<{ projects: Project[] }> = ({ projects }) => {
     const getStatusColor = (score: number) => {
         if (score >= 85) return 'bg-[#10b981]';
         if (score >= 60) return 'bg-yellow-500';
@@ -17,7 +23,7 @@ const ProjectHealth: React.FC = () => {
     return (
         <Card title="Project Health">
             <ul className="space-y-4">
-                {MOCK_PROJECTS.slice(0, 5).map(project => (
+                {projects.slice(0, 5).map(project => (
                     <li key={project.id} className="flex items-center justify-between">
                         <div>
                             <p className="font-medium text-[#1e293b]">{project.name}</p>
@@ -59,10 +65,10 @@ const ActivityFeed: React.FC = () => {
     );
 };
 
-const Overview: React.FC = () => {
-    const activeProjects = MOCK_PROJECTS.filter(p => p.status !== ProjectStatus.Completed).length;
-    const atRiskProjects = MOCK_PROJECTS.filter(p => p.status === ProjectStatus.AtRisk || p.status === ProjectStatus.OffTrack).length;
-    const avgHealth = Math.round(MOCK_PROJECTS.reduce((acc, p) => acc + p.healthScore, 0) / MOCK_PROJECTS.length);
+const Overview: React.FC<OverviewProps> = ({ projects, prospects }) => {
+    const activeProjects = projects.filter(p => p.status !== ProjectStatus.Completed).length;
+    const atRiskProjects = projects.filter(p => p.status === ProjectStatus.AtRisk || p.status === ProjectStatus.OffTrack).length;
+    const avgHealth = projects.length > 0 ? Math.round(projects.reduce((acc, p) => acc + p.healthScore, 0) / projects.length) : 0;
     
     return (
         <div className="space-y-6">
@@ -71,7 +77,7 @@ const Overview: React.FC = () => {
                 <StatCard title="Active Projects" value={activeProjects.toString()} change="+2 this week" positive={true} />
                 <StatCard title="Projects at Risk" value={atRiskProjects.toString()} change="+1 this week" positive={false} />
                 <StatCard title="Avg. Project Health" value={`${avgHealth}%`} change="-3% this month" positive={false} />
-                <StatCard title="New Prospects" value="8" change="+12% this month" positive={true} />
+                <StatCard title="New Prospects" value={prospects.length.toString()} change="+12% this month" positive={true} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -79,7 +85,7 @@ const Overview: React.FC = () => {
                     <RevenueChart />
                 </div>
                 <div>
-                    <ProjectHealth />
+                    <ProjectHealth projects={projects} />
                 </div>
             </div>
              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
