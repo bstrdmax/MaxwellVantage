@@ -1,5 +1,3 @@
-
-
 # Technical Guide: Development Setup
 
 This guide explains how to set up the Maxwell Vantage application on a local machine for development purposes.
@@ -36,31 +34,29 @@ The application uses environment variables to handle API keys securely.
 > **CRITICAL SECURITY NOTE**
 > 
 > It is essential to distinguish between server-side secrets and client-side keys.
-> - **Server-Side Secrets (`API_KEY`, `AIRTABLE_...`)**: These are highly sensitive and MUST NOT be prefixed with `VITE_`. They are used by the Netlify Dev server to simulate the secure backend environment.
+> - **Server-Side Secrets (`AIRTABLE_...`)**: These are highly sensitive and MUST NOT be prefixed with `VITE_`. They are used by the Netlify Dev server to simulate the secure backend environment.
 > - **Client-Side Keys (`VITE_FIREBASE_...`)**: These are safe to be exposed in the browser and MUST be prefixed with `VITE_` for the Vite build process to include them.
 > 
 > **Incorrectly prefixing a secret like `AIRTABLE_API_KEY` with `VITE_` will expose it and cause your production build to fail Netlify's security scan.**
 
 #### Required Variables
 
+Your `.env` file needs to contain keys for three services: Google Gemini, Airtable, and Firebase.
+
 **Server-Side Secrets (No `VITE_` prefix):**
--   `API_KEY`: Your Google Gemini API Key.
--   `AIRTABLE_API_KEY`: Your Airtable API Key.
--   `AIRTABLE_BASE_ID`: Your Airtable Base ID.
--   `PROJECTS_TABLE_NAME`: The name of your projects table in Airtable.
--   `PROSPECTS_TABLE_NAME`: The name of your prospects table in Airtable.
+These keys are used by the backend and are not exposed to the browser. You will need to add variables for:
+-   Your Google Gemini API Key.
+-   Your Airtable API Key.
+-   Your Airtable Base ID.
+-   The name of your projects table in Airtable.
+-   The name of your prospects table in Airtable.
 
 **Client-Side Keys (Must have `VITE_` prefix):**
--   `VITE_FIREBASE_API_KEY`: Your Firebase API Key.
--   `VITE_FIREBASE_AUTH_DOMAIN`: Your Firebase auth domain.
--   `VITE_FIREBASE_PROJECT_ID`: Your Firebase project ID.
--   `VITE_FIREBASE_STORAGE_BUCKET`: Your Firebase storage bucket.
--   `VITE_FIREBASE_MESSAGING_SENDER_ID`: Your Firebase messaging sender ID.
--   `VITE_FIREBASE_APP_ID`: Your Firebase app ID.
+These keys are for Firebase and are safely exposed to the browser.
+-   You will need to add all the key-value pairs from your Firebase web app's configuration object (apiKey, authDomain, projectId, etc.).
+-   **Crucially, each variable name must be prefixed with `VITE_` for the application to work.** For example, the `apiKey` from Firebase should be stored in a variable named `VITE_FIREBASE_API_KEY`.
 
-Replace the placeholder descriptions with your actual credentials.
-- The server-side keys (like `API_KEY` and `AIRTABLE_API_KEY`) are used by the Netlify CLI to simulate the server environment for your functions.
-- The `VITE_` prefix is required by Vite to expose variables to the client-side application code.
+Refer to the source code (`src/firebase.ts`, `netlify/functions/*.ts`) for the exact variable names the application expects.
 
 ### 3. Running the Application
 
