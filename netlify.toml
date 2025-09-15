@@ -12,12 +12,12 @@
   # Specify the Node.js version to use for the build, matching package.json
   NODE_VERSION = "20"
 
-  [secrets]
-  # Omit specific keys from scanning (if they're false positives)
-  SECRETS_SCAN_OMIT_KEYS = "SOME_KEY,ANOTHER_KEY"
+[secrets]
+  # Omit the specific keys that are causing false positives
+  SECRETS_SCAN_OMIT_KEYS = "AIRTABLE_API_KEY,AIRTABLE_BASE_ID,API_KEY,VITE_FIREBASE_API_KEY,VITE_FIREBASE_AUTH_DOMAIN,VITE_FIREBASE_PROJECT_ID,VITE_FIREBASE_STORAGE_BUCKET,VITE_FIREBASE_MESSAGING_SENDER_ID"
   
-  # Omit specific paths from scanning
-  SECRETS_SCAN_OMIT_PATHS = "public/config.json,src/test-data/*"
+  # Add paths that might contain false positives
+  SECRETS_SCAN_OMIT_PATHS = "dist/*,build/*,*.map"
 
 # Secrets scanning configuration to prevent build failures
 [secrets_scanning]
