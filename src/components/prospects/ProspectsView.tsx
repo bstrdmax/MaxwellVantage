@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import Card from '../ui/Card';
 import { MOCK_SYSTEM_CONTEXT, UserIcon, HeartIcon, FlagIcon, SearchIcon, SparklesIcon, BrainCircuitIcon, LightbulbIcon, TargetIcon, MessageSquareQuoteIcon, ZapIcon, AirtableIcon, CheckCircleIcon } from '../../constants';
