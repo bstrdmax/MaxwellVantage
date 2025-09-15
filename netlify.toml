@@ -13,26 +13,8 @@
   NODE_VERSION = "20"
 
 [secrets]
-  # Omit the specific keys that are causing false positives
-  SECRETS_SCAN_OMIT_KEYS = "AIRTABLE_API_KEY,AIRTABLE_BASE_ID,API_KEY,VITE_FIREBASE_API_KEY,VITE_FIREBASE_AUTH_DOMAIN,VITE_FIREBASE_PROJECT_ID,VITE_FIREBASE_STORAGE_BUCKET,VITE_FIREBASE_MESSAGING_SENDER_ID"
+  # Omit specific keys from scanning
+  SECRETS_SCAN_OMIT_KEYS = "AIRTABLE_API_KEY,AIRTABLE_BASE_ID,API_KEY,VITE_FIREBASE_API_KEY,VITE_FIREBASE_APP_ID,VITE_FIREBASE_AUTH_DOMAIN,VITE_FIREBASE_MESSAGING_SENDER_ID,VITE_FIREBASE_PROJECT_ID,VITE_FIREBASE_STORAGE_BUCKET"
   
-  # Add paths that might contain false positives
-  SECRETS_SCAN_OMIT_PATHS = "dist/*,build/*,*.map"
-
-# Secrets scanning configuration to prevent build failures
-[secrets_scanning]
-  # A list of secret keys that should be ignored by the scanner.
-  # This is necessary because our documentation files reference these keys by name.
-  omit_keys = [
-    "API_KEY",
-    "AIRTABLE_API_KEY",
-    "AIRTABLE_BASE_ID",
-    "PROJECTS_TABLE_NAME",
-    "PROSPECTS_TABLE_NAME",
-    "VITE_FIREBASE_API_KEY",
-    "VITE_FIREBASE_APP_ID",
-    "VITE_FIREBASE_AUTH_DOMAIN",
-    "VITE_FIREBASE_MESSAGING_SENDER_ID",
-    "VITE_FIREBASE_PROJECT_ID",
-    "VITE_FIREBASE_STORAGE_BUCKET"
-  ]
+  # Omit build directory from scanning
+  SECRETS_SCAN_OMIT_PATHS = "dist/*,build/*"
