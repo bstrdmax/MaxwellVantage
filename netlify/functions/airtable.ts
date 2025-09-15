@@ -14,6 +14,7 @@ const handler: Handler = async (event: HandlerEvent) => {
   const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, PROJECTS_TABLE_NAME } = process.env;
 
   // Check for the presence of necessary environment variables.
+  // NOTE: We use `process.env` here because this is secure server-side code.
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || !PROJECTS_TABLE_NAME) {
     console.error("Airtable environment variables for projects not set.");
     return {
