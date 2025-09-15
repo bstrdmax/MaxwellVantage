@@ -1,5 +1,3 @@
-
-
 # Technical Guide: Deployment to Netlify
 
 This guide provides step-by-step instructions for deploying the Maxwell Vantage application to Netlify.
@@ -110,27 +108,26 @@ This is the most important step for ensuring your application works and your API
 <br>
 
 ### 4.1 Server-Side Variables (Secrets)
-These variables are only accessible by the backend functions and are kept secure. **DO NOT add a `VITE_` prefix to these.** Add each variable with its corresponding secret value from your service provider.
+These variables are only accessible by the backend functions and are kept secure. **DO NOT add a `VITE_` prefix to these.** Add each variable with its corresponding secret value from your service provider. The required variables are:
+-   Your Google Gemini API Key.
+-   Your Airtable Personal Access Token or API Key.
+-   The ID of your Airtable base.
+-   The exact name of the table for projects.
+-   The exact name of the table for prospects.
 
-| Key | Description |
-| :-- | :---------- |
-| `API_KEY` | Your Google Gemini API Key. |
-| `AIRTABLE_API_KEY` | Your Airtable Personal Access Token or API Key. |
-| `AIRTABLE_BASE_ID` | The ID of your Airtable base. |
-| `PROJECTS_TABLE_NAME` | The exact name of the table for projects. |
-| `PROSPECTS_TABLE_NAME`| The exact name of the table for prospects. |
+Refer to the serverless function files (`netlify/functions/*.ts`) for the exact environment variable names the backend expects.
 
 ### 4.2 Client-Side Variables (Public)
 These variables are prefixed with `VITE_` and are safe to be exposed to the browser. Only Firebase keys should be in this section. Add each variable with its corresponding value from the `firebaseConfig` object you obtained in Step 0.
+The application requires all keys from your Firebase config:
+-   API Key
+-   Auth Domain
+-   Project ID
+-   Storage Bucket
+-   Messaging Sender ID
+-   App ID
 
-| Key | Description |
-| :-- | :---------- |
-| `VITE_FIREBASE_API_KEY` | The API Key from your Firebase config. |
-| `VITE_FIREBASE_AUTH_DOMAIN` | The Auth Domain from your Firebase config. |
-| `VITE_FIREBASE_PROJECT_ID`| The Project ID from your Firebase config. |
-| `VITE_FIREBASE_STORAGE_BUCKET`| The Storage Bucket from your Firebase config. |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | The Messaging Sender ID from your Firebase config. |
-| `VITE_FIREBASE_APP_ID` | The App ID from your Firebase config. |
+Each variable name **must be prefixed with `VITE_`**. For example, the variable for your Firebase API key should be named `VITE_FIREBASE_API_KEY`.
 
 **Double-check that you have entered all variables correctly.** A mistake here is the most common cause of deployment failure.
 
