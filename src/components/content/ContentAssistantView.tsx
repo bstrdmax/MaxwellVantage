@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Card from '../ui/Card';
 import { MOCK_CONTENT_IDEAS, MOCK_GENERATED_CONTENT, MOCK_DRIVE_IDEAS, GoogleDriveIcon, AirtableIcon, MOCK_CONTENT_CALENDAR, MOCK_CONTENT_CONTEXT, PlusCircleIcon, Trash2Icon, CheckCircleIcon, BrainCircuitIcon, PenToolIcon, BookOpenIcon, ClipboardCopyIcon } from '../../constants';
