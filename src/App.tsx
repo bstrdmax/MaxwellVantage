@@ -1,13 +1,13 @@
 
-import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
+import React, { useState, lazy, Suspense, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import Footer from './components/Footer';
-import LoginView from './components/auth/LoginView';
-import { useAuth } from './contexts/AuthContext';
-import { MOCK_NOTIFICATIONS, MOCK_PROJECTS, BrainCircuitIcon } from '../constants';
-import type { Notification, Project } from '../types';
-import { ProjectStatus } from '../types';
+import Footer from './src/components/Footer';
+import LoginView from './src/components/auth/LoginView';
+import { useAuth } from './src/contexts/AuthContext';
+import { MOCK_NOTIFICATIONS, MOCK_PROJECTS, BrainCircuitIcon } from './constants';
+import type { Notification, Project } from './types';
+import { ProjectStatus } from './types';
 
 // Lazily load the main view components to enable code-splitting.
 // This creates separate JavaScript chunks for each view, which are loaded on demand.
@@ -56,33 +56,22 @@ const App: React.FC = () => {
     // Manages which main view is currently displayed (e.g., 'Dashboard', 'Projects Assistant').
     const [activeView, setActiveView] = useState<ViewType>('Dashboard');
     
-    // State for notifications is managed globally as it's a cross-cutting concern.
-    const [notifications, setNotifications] = useState<Notification[]>(() => [...MOCK_NOTIFICATIONS]);
-
-    /**
-     * A function passed down to child components to allow them to add new notifications.
-     * @param message - The content of the notification to be displayed.
-     */
-    const addNotification = useCallback((message: string) => {
-        const newNotification: Notification = {
-            id: `notif${Date.now()}`,
-            message,
-            timestamp: 'Just now',
-            read: false,
-        };
-        setNotifications(prev => [newNotification, ...prev]);
-    }, []);
-
-    // This effect is a placeholder for generating deadline notifications.
-    // In the refactored architecture, this would ideally be generated from a global data context
-    // or pushed from the ProjectsView component. For now, it uses mock data.
-    useEffect(() => {
+    // State for notifications, initialized with mock data and dynamically generated deadline alerts.
+    const [notifications, setNotifications] = useState<Notification[]>(() => {
+        const initialNotifications = [...MOCK_NOTIFICATIONS];
+        
+        // Logic to create notifications for projects with approaching or past deadlines.
         const deadlineNotifications: Notification[] = MOCK_PROJECTS
             .map((project: Project) => {
-                if (project.status === ProjectStatus.Completed) return null;
+                if (project.status === ProjectStatus.Completed) {
+                    return null;
+                }
+
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const deadlineDate = new Date(project.deadline);
+                deadlineDate.setHours(0, 0, 0, 0);
+
                 const diffTime = deadlineDate.getTime() - today.getTime();
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 
@@ -94,15 +83,35 @@ const App: React.FC = () => {
                 }
 
                 if (message) {
-                    return { id: `notif-deadline-${project.id}`, message, timestamp: 'Just now', read: false };
+                    return {
+                        id: `notif-deadline-${project.id}`,
+                        message,
+                        timestamp: 'Just now',
+                        read: false,
+                    };
                 }
                 return null;
             })
             .filter((n): n is Notification => n !== null);
         
-        setNotifications(prev => [...deadlineNotifications, ...MOCK_NOTIFICATIONS]);
-    }, []);
+        // Prepend deadline notifications so they are most visible.
+        return [...deadlineNotifications, ...initialNotifications];
+    });
 
+    /**
+     * A function passed down to child components to allow them to add new notifications.
+     * @param message - The content of the notification to be displayed.
+     */
+    // FIX: Use functional update for setNotifications to avoid stale state and remove 'notifications' from dependency array.
+    const addNotification = useCallback((message: string) => {
+        const newNotification: Notification = {
+            id: `notif${Date.now()}`,
+            message,
+            timestamp: 'Just now',
+            read: false,
+        };
+        setNotifications(prev => [newNotification, ...prev]);
+    }, []);
 
     /**
      * Renders the main content view based on the `activeView` state.
@@ -110,7 +119,8 @@ const App: React.FC = () => {
     const renderContent = () => {
         switch (activeView) {
             case 'Dashboard':
-                return <Overview addNotification={addNotification}/>;
+                // FIX: Pass addNotification prop to Overview component.
+                return <Overview addNotification={addNotification} />;
             case 'Projects Assistant':
                 return <ProjectsView addNotification={addNotification} />;
             case 'Prospects Assistant':
@@ -120,11 +130,13 @@ const App: React.FC = () => {
             case 'Email VA Assistant':
                 return <EmailVAView />;
             case 'COO Assistant':
-                return <COOAssistantView addNotification={addNotification}/>;
+                // FIX: Pass addNotification prop to COOAssistantView component.
+                return <COOAssistantView addNotification={addNotification} />;
             case 'Settings':
                 return <SettingsView />;
             default:
-                return <Overview addNotification={addNotification}/>;
+                // FIX: Pass addNotification prop to Overview component.
+                return <Overview addNotification={addNotification} />;
         }
     };
 
