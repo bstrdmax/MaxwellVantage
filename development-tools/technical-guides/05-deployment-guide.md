@@ -102,8 +102,8 @@ This is the most important step for ensuring your application works and your API
 > 
 > You **MUST** configure your environment variables exactly as described below. A common error is incorrectly prefixing secret keys with `VITE_`.
 > 
-> - **Correct (Secure):** `AIRTABLE_API_K​EY`
-> - **INCORRECT (Insecure):** `VITE_AIRTABLE_API_K​EY`
+> - **Correct (Secure):** `AIRTABLE_API_KEY`
+> - **INCORRECT (Insecure):** `VITE_AIRTABLE_API_KEY`
 > 
 > Prefixing a secret key like the Airtable or Gemini key with `VITE_` will **expose it to the public internet** and will **cause your build to fail**.
 
@@ -114,23 +114,23 @@ These variables are only accessible by the backend functions and are kept secure
 
 | Key | Description |
 | :-- | :---------- |
-| `API_K​EY` | Your Google Gemini API Key. |
-| `AIRTABLE_API_K​EY` | Your Airtable Personal Access Token or API Key. |
-| `AIRTABLE_BASE_I​D` | The ID of your Airtable base. |
-| `PROJECTS_TABLE_NA​ME` | The exact name of the table for projects. |
-| `PROSPECTS_TABLE_NA​ME`| The exact name of the table for prospects. |
+| `API_KEY` | Your Google Gemini API Key. |
+| `AIRTABLE_API_KEY` | Your Airtable Personal Access Token or API Key. |
+| `AIRTABLE_BASE_ID` | The ID of your Airtable base. |
+| `PROJECTS_TABLE_NAME` | The exact name of the table for projects. |
+| `PROSPECTS_TABLE_NAME`| The exact name of the table for prospects. |
 
 ### 4.2 Client-Side Variables (Public)
 These variables are prefixed with `VITE_` and are safe to be exposed to the browser. Only Firebase keys should be in this section. Add each variable with its corresponding value from the `firebaseConfig` object you obtained in Step 0.
 
 | Key | Description |
 | :-- | :---------- |
-| `VITE_FIREBASE_API_K​EY` | The API Key from your Firebase config. |
-| `VITE_FIREBASE_AUTH_DOMA​IN` | The Auth Domain from your Firebase config. |
-| `VITE_FIREBASE_PROJECT_I​D`| The Project ID from your Firebase config. |
-| `VITE_FIREBASE_STORAGE_BUCK​ET`| The Storage Bucket from your Firebase config. |
-| `VITE_FIREBASE_MESSAGING_SENDER_I​D` | The Messaging Sender ID from your Firebase config. |
-| `VITE_FIREBASE_APP_I​D` | The App ID from your Firebase config. |
+| `VITE_FIREBASE_API_KEY` | The API Key from your Firebase config. |
+| `VITE_FIREBASE_AUTH_DOMAIN` | The Auth Domain from your Firebase config. |
+| `VITE_FIREBASE_PROJECT_ID`| The Project ID from your Firebase config. |
+| `VITE_FIREBASE_STORAGE_BUCKET`| The Storage Bucket from your Firebase config. |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | The Messaging Sender ID from your Firebase config. |
+| `VITE_FIREBASE_APP_ID` | The App ID from your Firebase config. |
 
 **Double-check that you have entered all variables correctly.** A mistake here is the most common cause of deployment failure.
 
@@ -151,7 +151,7 @@ These variables are prefixed with `VITE_` and are safe to be exposed to the brow
 3.  **Test AI Features**:
     -   Navigate to the **Prospects Assistant**.
     -   Select a prospect and click **"Generate AI Analysis"**.
-    -   If the analysis loads successfully, your serverless function is correctly configured with the `API_K​EY`. If you get an error, check the function logs in the Netlify dashboard.
+    -   If the analysis loads successfully, your serverless function is correctly configured with the `API_KEY`. If you get an error, check the function logs in the Netlify dashboard.
 4.  **Test Airtable Integration**:
     -   Navigate to the **Projects Assistant**.
     -   Verify that the "All Projects" table shows a green "Live from Airtable" status indicator. If it shows "Using Mock Data", re-check your `AIRTABLE_...` environment variables.
@@ -161,5 +161,5 @@ These variables are prefixed with `VITE_` and are safe to be exposed to the brow
 ## Troubleshooting
 
 -   **"Function not found" or 404 errors on AI/Airtable calls**: Ensure your build settings in Netlify correctly specify the functions directory (`netlify/functions`).
--   **AI features return errors**: Go to the **"Functions"** tab in your Netlify site dashboard and check the logs for your `gemini` function. The logs will often contain specific error messages from the AI or point to a missing `API_K​EY`.
+-   **AI features return errors**: Go to the **"Functions"** tab in your Netlify site dashboard and check the logs for your `gemini` function. The logs will often contain specific error messages from the AI or point to a missing `API_KEY`.
 -   **Airtable/Firebase not working**: This is almost always due to incorrect or missing environment variables. Go back to Step 4 and carefully verify each key and value. Remember to redeploy after any change to environment variables.
