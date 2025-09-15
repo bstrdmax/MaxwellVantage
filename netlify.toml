@@ -9,7 +9,6 @@
   status = 200
 
 [build.environment]
-  # Specify the Node.js version to use for the build, matching package.json
   NODE_VERSION = "20"
 
 [secrets]
