@@ -1,13 +1,9 @@
 
-
-import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import Card from '../ui/Card';
 // FIX: Added missing HeartIcon to imports.
 import { GoogleDriveIcon, AirtableIcon, BrainCircuitIcon, UserIcon, LinkIcon, HeartIcon } from '../../constants';
 
 const SettingsView = () => {
-  const { currentUser } = useAuth();
   return (
     <div className="space-y-6">
       <h1 className="md:text-4xl text-3xl font-bold text-[#6366f1]">Settings</h1>
@@ -104,7 +100,7 @@ const SettingsView = () => {
                   </div>
                   <div>
                     <label className="text-xs text-slate-500">Email</label>
-                    <input type="email" value={currentUser?.email || ''} disabled className="w-full bg-slate-100 text-slate-500 text-sm rounded-md p-2 border border-slate-200 cursor-not-allowed" />
+                    <input type="email" value="admin@maxwellrisk.com" disabled className="w-full bg-slate-100 text-slate-500 text-sm rounded-md p-2 border border-slate-200 cursor-not-allowed" />
                   </div>
                 </div>
               </div>
@@ -132,7 +128,7 @@ const SettingsView = () => {
                             <img src="https://picsum.photos/100/100" alt="Admin User" className="w-8 h-8 rounded-full mr-3" />
                             <div>
                                 <p className="text-sm font-medium text-[#1e293b]">Admin User</p>
-                                <p className="text-xs text-slate-500">{currentUser?.email || ''}</p>
+                                <p className="text-xs text-slate-500">admin@maxwellrisk.com</p>
                             </div>
                         </div>
                         <span className="text-xs font-semibold text-slate-500">Owner</span>
