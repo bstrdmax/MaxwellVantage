@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Card from '../ui/Card';
-import { MOCK_PROSPECTS, MOCK_SYSTEM_CONTEXT, UserIcon, HeartIcon, FlagIcon, SearchIcon, SparklesIcon, BrainCircuitIcon, LightbulbIcon, TargetIcon, MessageSquareQuoteIcon, ZapIcon, AirtableIcon, CheckCircleIcon } from '../../constants';
+import { MOCK_SYSTEM_CONTEXT, UserIcon, HeartIcon, FlagIcon, SearchIcon, SparklesIcon, BrainCircuitIcon, LightbulbIcon, TargetIcon, MessageSquareQuoteIcon, ZapIcon, AirtableIcon, CheckCircleIcon } from '../../constants';
 import type { Prospect, SystemContext } from '../../types';
 import { ProspectSource } from '../../types';
 import { callGemini, SchemaType } from '../../utils/ai';
@@ -12,11 +12,12 @@ const LoadingSpinner = ({ small }: { small?: boolean}) => (
 
 interface ProspectsViewProps {
     addNotification: (message: string) => void;
+    prospects: Prospect[];
+    setProspects: React.Dispatch<React.SetStateAction<Prospect[]>>;
 }
 
-const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
-    const [prospects, setProspects] = useState<Prospect[]>(MOCK_PROSPECTS);
-    const [selectedProspectId, setSelectedProspectId] = useState<string | null>(prospects[0]?.id || null);
+const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification, prospects, setProspects }) => {
+    const [selectedProspectId, setSelectedProspectId] = useState<string | null>(null);
     
     const [systemContext, setSystemContext] = useState<SystemContext>(() => {
         try {
@@ -40,6 +41,13 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
             console.error("Failed to save system context to localStorage", error);
         }
     }, [systemContext]);
+    
+    useEffect(() => {
+        // When prospects are loaded from the parent, select the first one if none is selected.
+        if (prospects.length > 0 && !selectedProspectId) {
+            setSelectedProspectId(prospects[0].id);
+        }
+    }, [prospects, selectedProspectId]);
     
     const selectedProspect = useMemo(() => prospects.find(p => p.id === selectedProspectId), [prospects, selectedProspectId]);
 
@@ -101,8 +109,6 @@ const ProspectsView: React.FC<ProspectsViewProps> = ({ addNotification }) => {
         } catch (error) {
             console.error("Error generating prospect analysis:", error);
             addNotification(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-            // Fallback to mock data on error for demo purposes
-            setProspects(prev => prev.map(p => p.id === prospectId ? { ...p, ...MOCK_PROSPECTS[0], id: p.id, companyName: p.companyName, contact: p.contact } : p));
         } finally {
             setIsAnalyzing(false);
         }
