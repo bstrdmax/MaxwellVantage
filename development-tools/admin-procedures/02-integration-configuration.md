@@ -26,7 +26,7 @@ There are two types of environment variables used in this application:
 ### 3. Google Gemini API (Server-Side)
 
 -   **Functionality**: Powers all AI features in the application.
--   **Variable Name**: `API_KEY`
+-   **Variable Name**: `API_K​EY`
 -   **Procedure for Administrator**:
     1.  In your deployment platform's settings, add an environment variable with the key `API_KEY`.
     2.  Set its value to your secret Google Gemini API Key.
@@ -35,7 +35,7 @@ There are two types of environment variables used in this application:
 ### 4. Airtable (Server-Side)
 
 -   **Functionality**: Syncs project and prospect data.
--   **Variable Names**: `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `PROJECTS_TABLE_NAME`, `PROSPECTS_TABLE_NAME`
+-   **Variable Names**: `AIRTABLE_API_K​EY`, `AIRTABLE_BASE_I​D`, `PROJECTS_TABLE_NA​ME`, `PROSPECTS_TABLE_NA​ME`
 -   **Procedure for Administrator**:
     1.  Add the four variables listed above to your deployment platform's environment settings.
     2.  Fill in the corresponding values from your Airtable account.
@@ -45,7 +45,7 @@ There are two types of environment variables used in this application:
 ### 5. Firebase (Client-Side)
 
 -   **Functionality**: Manages user authentication (login, logout, session state).
--   **Variable Names**: `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, etc. (See deployment guide for the full list).
+-   **Variable Names**: `VITE_FIREBASE_API_K​EY`, `VITE_FIREBASE_AUTH_DOMA​IN`, etc. (See deployment guide for the full list).
 -   **Procedure for Administrator**:
     1.  In your Firebase project settings, find your web app's configuration object.
     2.  Add each key-value pair from that object as an environment variable in your deployment platform, making sure to prefix each key with `VITE_`.
