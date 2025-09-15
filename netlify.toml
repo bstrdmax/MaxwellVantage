@@ -12,6 +12,13 @@
   # Specify the Node.js version to use for the build, matching package.json
   NODE_VERSION = "20"
 
+  [secrets]
+  # Omit specific keys from scanning (if they're false positives)
+  SECRETS_SCAN_OMIT_KEYS = "SOME_KEY,ANOTHER_KEY"
+  
+  # Omit specific paths from scanning
+  SECRETS_SCAN_OMIT_PATHS = "public/config.json,src/test-data/*"
+
 # Secrets scanning configuration to prevent build failures
 [secrets_scanning]
   # A list of secret keys that should be ignored by the scanner.
