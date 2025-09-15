@@ -17,9 +17,11 @@
   # A list of secret keys that should be ignored by the scanner.
   # This is necessary because our documentation files reference these keys by name.
   omit_keys = [
+    "API_KEY",
     "AIRTABLE_API_KEY",
     "AIRTABLE_BASE_ID",
-    "API_KEY",
+    "PROJECTS_TABLE_NAME",
+    "PROSPECTS_TABLE_NAME",
     "VITE_FIREBASE_API_KEY",
     "VITE_FIREBASE_APP_ID",
     "VITE_FIREBASE_AUTH_DOMAIN",
