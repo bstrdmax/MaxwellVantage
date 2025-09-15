@@ -1,4 +1,6 @@
 
+
+import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../ui/Card';
 // FIX: Added missing HeartIcon to imports.
