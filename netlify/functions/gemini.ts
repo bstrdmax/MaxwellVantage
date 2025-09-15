@@ -5,6 +5,8 @@ import type { Handler, HandlerEvent } from "@netlify/functions";
 // This check is crucial for server-side environment variables.
 // It ensures that the function will fail to build if the API key is not provided in the Netlify UI,
 // preventing accidental deployment of a non-functional service.
+// NOTE: We use `process.env` here because this code runs on a secure server, not in the browser.
+// Vite's `import.meta.env` is only for client-side code.
 if (!process.env.API_KEY) {
   throw new Error("API_KEY environment variable not set on the server.");
 }
